@@ -42,13 +42,6 @@ public class Calculadora extends JFrame {
 	private JButton btnEqual;
 	private JButton btnSum;
 
-	private Border lineEqual;
-	private Border marginEqual;
-	private Border lineOperation;
-	private Border marginOperation;
-	private Border lineDelete;
-	private Border marginDelete;
-
 	/**
 	 * Launch the application.
 	 */
@@ -73,7 +66,7 @@ public class Calculadora extends JFrame {
 		// contentPane
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 250, 343);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -86,41 +79,37 @@ public class Calculadora extends JFrame {
 		panel.setLayout(new GridLayout(5, 4, 5, 5));
 
 		// botones
-
-		lineEqual = new LineBorder(new Color(0, 150, 70), 2, true);
-		marginEqual = new EmptyBorder(5, 15, 5, 15);
-
-		lineOperation = new LineBorder(new Color(0, 0, 150), 2, true);
-		marginOperation = new EmptyBorder(5, 15, 5, 15);
-
-		lineDelete = new LineBorder(new Color(150, 0, 0), 2, true);
-		marginDelete = new EmptyBorder(5, 15, 5, 15);
 		
 		btnAC = new JButton("AC");
-		btnAC.setBackground(new Color(153, 255, 148));
+		btnAC.setBackground(new Color(255, 119, 113));
 		btnAC.setOpaque(true); 
 		btnAC.setContentAreaFilled(true); 
-		btnAC.setBorder(new CompoundBorder(lineDelete, marginDelete));
 		panel.add(btnAC);
 		
 		btnC = new JButton("C");
-		btnC.setBackground(new Color(153, 255, 148));
+		btnC.setBackground(new Color(255, 171, 167));
 		btnC.setOpaque(true); 
 		btnC.setContentAreaFilled(true); 
-		btnC.setBorder(new CompoundBorder(lineDelete, marginDelete));
 		panel.add(btnC);
 		
 		btnMasMenos = new JButton("±");
+		btnMasMenos.setBorder(new CompoundBorder(null, new CompoundBorder(null, new CompoundBorder())));
+		btnMasMenos.setBackground(new Color(187, 239, 255));
+		btnMasMenos.setOpaque(true); 
+		btnMasMenos.setContentAreaFilled(true); 
+		btnPercent.setBorder(new CompoundBorder(
+			new LineBorder(new Color(74, 255, 246), 2, true), 
+			new EmptyBorder(5, 15, 5, 15)));
 		panel.add(btnMasMenos);
 		
 		btnPercent = new JButton("%");
+		btnPercent.setBackground(new Color(187, 239, 255));
+		btnPercent.setOpaque(true); 
+		btnPercent.setContentAreaFilled(true); 
+		btnPercent.setBorder(new CompoundBorder(new LineBorder(new Color(74, 255, 246), 2, true), new EmptyBorder(5, 15, 5, 15)));
 		panel.add(btnPercent);
 		
 		btn_7 = new JButton("7");
-		btn_7.setBackground(new Color(153, 255, 148));
-		btn_7.setOpaque(true); 
-		btn_7.setContentAreaFilled(true); 
-		btn_7.setBorder(new CompoundBorder(lineEqual, marginEqual));
 		panel.add(btn_7);
 
 		panel.add(btnEqual);
@@ -132,6 +121,12 @@ public class Calculadora extends JFrame {
 		panel.add(btn_9);
 		
 		btnDivision = new JButton("/");
+		btnDivision.setBackground(new Color(187, 239, 255));
+		btnDivision.setOpaque(true); 
+		btnDivision.setContentAreaFilled(true); 
+		btnPercent.setBorder(new CompoundBorder(
+			new LineBorder(new Color(74, 255, 246), 2, true), 
+			new EmptyBorder(5, 15, 5, 15)));
 		panel.add(btnDivision);
 		
 		btn_4 = new JButton("4");
@@ -144,6 +139,12 @@ public class Calculadora extends JFrame {
 		panel.add(btn_6);
 		
 		btnMultiplication = new JButton("*");
+		btnMultiplication.setBackground(new Color(187, 239, 255));
+		btnMultiplication.setOpaque(true); 
+		btnMultiplication.setContentAreaFilled(true); 
+		btnPercent.setBorder(new CompoundBorder(
+			new LineBorder(new Color(74, 255, 246), 2, true), 
+			new EmptyBorder(5, 15, 5, 15)));
 		panel.add(btnMultiplication);
 		
 		btn_1 = new JButton("1");
@@ -156,6 +157,12 @@ public class Calculadora extends JFrame {
 		panel.add(btn_3);
 		
 		btnSubtraction = new JButton("-");
+		btnSubtraction.setBackground(new Color(187, 239, 255));
+		btnSubtraction.setOpaque(true); 
+		btnSubtraction.setContentAreaFilled(true); 
+		btnPercent.setBorder(new CompoundBorder(
+			new LineBorder(new Color(74, 255, 246), 2, true), 
+			new EmptyBorder(5, 15, 5, 15)));
 		panel.add(btnSubtraction);
 		
 		btn_0 = new JButton("0");
@@ -165,13 +172,21 @@ public class Calculadora extends JFrame {
 		panel.add(btnPoint);
 		
 		btnEqual = new JButton("=");
-		btnEqual.setBackground(new Color(153, 255, 148));
+		btnEqual.setBackground(new Color(170, 196, 255));
 		btnEqual.setOpaque(true); // necesario para que se vea el fondo
 		btnEqual.setContentAreaFilled(true); // asegura que se pinte el área
-		btnEqual.setBorder(new CompoundBorder(lineEqual, marginEqual));
+		btnPercent.setBorder(new CompoundBorder(
+			new LineBorder(new Color(74, 255, 246), 2, true), 
+			new EmptyBorder(5, 15, 5, 15)));
 		panel.add(btnEqual);
 		
 		btnSum = new JButton("+");
+		btnSum.setBackground(new Color(187, 239, 255));
+		btnSum.setOpaque(true); 
+		btnSum.setContentAreaFilled(true); 
+		btnPercent.setBorder(new CompoundBorder(
+			new LineBorder(new Color(74, 255, 246), 2, true), 
+			new EmptyBorder(5, 15, 5, 15)));
 		panel.add(btnSum);
 
 		// textField
