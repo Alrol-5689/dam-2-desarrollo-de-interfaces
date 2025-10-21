@@ -15,6 +15,7 @@ import javax.swing.JTextField;
 import java.awt.GridLayout;
 import javax.swing.JButton;
 import java.awt.Color;
+import java.awt.Font;
 
 public class Calculadora extends JFrame {
 
@@ -66,7 +67,7 @@ public class Calculadora extends JFrame {
 		// contentPane
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 250, 343);
+		setBounds(100, 100, 445, 507);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -111,8 +112,6 @@ public class Calculadora extends JFrame {
 		
 		btn_7 = new JButton("7");
 		panel.add(btn_7);
-
-		panel.add(btnEqual);
 		
 		btn_8 = new JButton("8");
 		panel.add(btn_8);
