@@ -4,18 +4,15 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.border.Border;
-import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import javax.swing.JTextField;
 import java.awt.GridLayout;
 import javax.swing.JButton;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.ActionListener;
 
 public class Calculadora extends JFrame {
 
@@ -42,6 +39,11 @@ public class Calculadora extends JFrame {
 	private JButton btnPoint;
 	private JButton btnEqual;
 	private JButton btnSum;
+	
+	// --- Estado de la calculadora ---
+	private double acumulado = 0.0;
+	private String operador = null; // "+", "-", "*", "/"
+	private boolean nuevaEntrada = true;
 
 	/**
 	 * Launch the application.
@@ -64,14 +66,24 @@ public class Calculadora extends JFrame {
 	 */
 	public Calculadora() {
 
-		// contentPane
-
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 445, 507);
+		
+		// contentPane
+		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
+		
+		// textField
+		
+		textField = new JTextField();
+		contentPane.add(textField, BorderLayout.NORTH);
+		textField.setColumns(10);
+		textField.setHorizontalAlignment(JTextField.RIGHT);
+		textField.setFont(new Font("SansSerif", Font.BOLD, 24));
+		textField.setText("0"); // estado inicial
 		
 		// panel
 	
@@ -79,7 +91,7 @@ public class Calculadora extends JFrame {
 		contentPane.add(panel, BorderLayout.CENTER);
 		panel.setLayout(new GridLayout(5, 4, 5, 5));
 
-		// botones
+		// --- Crear botones (sin listeners vacíos) ---
 		
 		btnAC = new JButton("AC");
 		btnAC.setBackground(new Color(255, 119, 113));
@@ -94,106 +106,197 @@ public class Calculadora extends JFrame {
 		panel.add(btnC);
 		
 		btnMasMenos = new JButton("±");
-		btnMasMenos.setBorder(new CompoundBorder(null, new CompoundBorder(null, new CompoundBorder())));
 		btnMasMenos.setBackground(new Color(187, 239, 255));
 		btnMasMenos.setOpaque(true); 
 		btnMasMenos.setContentAreaFilled(true); 
-		btnPercent.setBorder(new CompoundBorder(
-			new LineBorder(new Color(74, 255, 246), 2, true), 
-			new EmptyBorder(5, 15, 5, 15)));
 		panel.add(btnMasMenos);
 		
 		btnPercent = new JButton("%");
 		btnPercent.setBackground(new Color(187, 239, 255));
 		btnPercent.setOpaque(true); 
 		btnPercent.setContentAreaFilled(true); 
-		btnPercent.setBorder(new CompoundBorder(new LineBorder(new Color(74, 255, 246), 2, true), new EmptyBorder(5, 15, 5, 15)));
 		panel.add(btnPercent);
 		
-		btn_7 = new JButton("7");
-		panel.add(btn_7);
-		
-		btn_8 = new JButton("8");
-		panel.add(btn_8);
-		
-		btn_9 = new JButton("9");
-		panel.add(btn_9);
+		btn_7 = new JButton("7"); panel.add(btn_7);
+		btn_8 = new JButton("8"); panel.add(btn_8);
+		btn_9 = new JButton("9"); panel.add(btn_9);
 		
 		btnDivision = new JButton("/");
 		btnDivision.setBackground(new Color(187, 239, 255));
 		btnDivision.setOpaque(true); 
 		btnDivision.setContentAreaFilled(true); 
-		btnPercent.setBorder(new CompoundBorder(
-			new LineBorder(new Color(74, 255, 246), 2, true), 
-			new EmptyBorder(5, 15, 5, 15)));
 		panel.add(btnDivision);
 		
-		btn_4 = new JButton("4");
-		panel.add(btn_4);
-		
-		btn_5 = new JButton("5");
-		panel.add(btn_5);
-		
-		btn_6 = new JButton("6");
-		panel.add(btn_6);
+		btn_4 = new JButton("4");  panel.add(btn_4);
+		btn_5 = new JButton("5"); panel.add(btn_5);
+		btn_6 = new JButton("6"); panel.add(btn_6);
 		
 		btnMultiplication = new JButton("*");
 		btnMultiplication.setBackground(new Color(187, 239, 255));
 		btnMultiplication.setOpaque(true); 
-		btnMultiplication.setContentAreaFilled(true); 
-		btnPercent.setBorder(new CompoundBorder(
-			new LineBorder(new Color(74, 255, 246), 2, true), 
-			new EmptyBorder(5, 15, 5, 15)));
+		btnMultiplication.setContentAreaFilled(true);
 		panel.add(btnMultiplication);
 		
-		btn_1 = new JButton("1");
-		panel.add(btn_1);
-		
-		btn_2 = new JButton("2");
-		panel.add(btn_2);
-		
-		btn_3 = new JButton("3");
-		panel.add(btn_3);
+		btn_1 = new JButton("1"); panel.add(btn_1);
+		btn_2 = new JButton("2"); panel.add(btn_2);
+		btn_3 = new JButton("3"); panel.add(btn_3);
 		
 		btnSubtraction = new JButton("-");
 		btnSubtraction.setBackground(new Color(187, 239, 255));
 		btnSubtraction.setOpaque(true); 
 		btnSubtraction.setContentAreaFilled(true); 
-		btnPercent.setBorder(new CompoundBorder(
-			new LineBorder(new Color(74, 255, 246), 2, true), 
-			new EmptyBorder(5, 15, 5, 15)));
 		panel.add(btnSubtraction);
 		
-		btn_0 = new JButton("0");
-		panel.add(btn_0);
-		
-		btnPoint = new JButton(".");
-		panel.add(btnPoint);
+		btn_0 = new JButton("0"); panel.add(btn_0);
+		btnPoint = new JButton("."); panel.add(btnPoint);
 		
 		btnEqual = new JButton("=");
 		btnEqual.setBackground(new Color(170, 196, 255));
-		btnEqual.setOpaque(true); // necesario para que se vea el fondo
-		btnEqual.setContentAreaFilled(true); // asegura que se pinte el área
-		btnPercent.setBorder(new CompoundBorder(
-			new LineBorder(new Color(74, 255, 246), 2, true), 
-			new EmptyBorder(5, 15, 5, 15)));
+		btnEqual.setOpaque(true); 
+		btnEqual.setContentAreaFilled(true);
 		panel.add(btnEqual);
 		
 		btnSum = new JButton("+");
 		btnSum.setBackground(new Color(187, 239, 255));
 		btnSum.setOpaque(true); 
 		btnSum.setContentAreaFilled(true); 
-		btnPercent.setBorder(new CompoundBorder(
-			new LineBorder(new Color(74, 255, 246), 2, true), 
-			new EmptyBorder(5, 15, 5, 15)));
 		panel.add(btnSum);
-
-		// textField
 		
-		textField = new JTextField();
-		contentPane.add(textField, BorderLayout.NORTH);
-		textField.setColumns(10);
+        ActionListener numberListener = e -> {
+            JButton src = (JButton) e.getSource();
+            appendDigit(src.getText()); // escribe el dígito
+        };
 
+        ActionListener opListener = e -> {
+            JButton src = (JButton) e.getSource();
+            aplicarOperador(src.getText()); // "+", "-", "*", "/"
+        };
+        
+        // Números
+        btn_0.addActionListener(numberListener);
+        btn_1.addActionListener(numberListener);
+        btn_2.addActionListener(numberListener);
+        btn_3.addActionListener(numberListener);
+        btn_4.addActionListener(numberListener);
+        btn_5.addActionListener(numberListener);
+        btn_6.addActionListener(numberListener);
+        btn_7.addActionListener(numberListener);
+        btn_8.addActionListener(numberListener);
+        btn_9.addActionListener(numberListener);
+
+        // Punto decimal
+        btnPoint.addActionListener(e -> appendPoint());
+        
+        // Operadores
+        btnSum.addActionListener(opListener);
+        btnSubtraction.addActionListener(opListener);
+        btnMultiplication.addActionListener(opListener);
+        btnDivision.addActionListener(opListener);
+
+        // Igual
+        btnEqual.addActionListener(e -> igual());
+
+        // AC, C, ±, %
+        btnAC.addActionListener(e -> resetAll());
+        btnC.addActionListener(e -> clearEntry());
+        btnMasMenos.addActionListener(e -> toggleSign());
+        btnPercent.addActionListener(e -> percent());       
+
+	}
+
+	// --- Helpers de display ---
+	
+	private String getDisplay() {
+	    String s = textField.getText();
+	    return (s == null || s.isEmpty()) ? "0" : s;
+	}
+
+	private void setDisplay(String s) {
+	    textField.setText(s);
+	}
+
+	private void appendDigit(String t) {
+	    if (nuevaEntrada || getDisplay().equals("0")) {
+	        setDisplay(t);
+	    } else {
+	        setDisplay(getDisplay() + t);
+	    }
+	    nuevaEntrada = false;
+	}
+
+	private void appendPoint() {
+	    if (nuevaEntrada) {
+	        setDisplay("0.");
+	        nuevaEntrada = false;
+	    } else if (!getDisplay().contains(".")) {
+	        setDisplay(getDisplay() + ".");
+	    }
+	}
+
+	private void aplicarOperador(String op) {
+	    double valor = Double.parseDouble(getDisplay());
+	    if (operador == null) {
+	        acumulado = valor;
+	    } else {
+	        acumulado = calcular(acumulado, valor, operador);
+	        setDisplay(trimDouble(acumulado));
+	    }
+	    operador = op;
+	    nuevaEntrada = true;
+	}
+
+	private double calcular(double a, double b, String op) {
+	    return switch (op) {
+	        case "+" -> a + b;
+	        case "-" -> a - b;
+	        case "*" -> a * b;
+	        case "/" -> (b == 0) ? Double.NaN : a / b;
+	        default -> b;
+	    };
+	}
+
+	private String trimDouble(double d) {
+	    if (Double.isNaN(d) || Double.isInfinite(d)) return "Error";
+	    String s = Double.toString(d);
+	    if (s.endsWith(".0")) s = s.substring(0, s.length() - 2);
+	    return s;
+	}
+
+	private void igual() {
+	    if (operador != null) {
+	        double valor = Double.parseDouble(getDisplay());
+	        double res = calcular(acumulado, valor, operador);
+	        setDisplay(trimDouble(res));
+	        acumulado = res;
+	        operador = null;
+	        nuevaEntrada = true;
+	    }
+	}
+
+	private void resetAll() { // AC
+	    acumulado = 0.0;
+	    operador = null;
+	    nuevaEntrada = true;
+	    setDisplay("0");
+	}
+
+	private void clearEntry() { // C
+	    setDisplay("0");
+	    nuevaEntrada = true;
+	}
+
+	private void toggleSign() { // ±
+	    String s = getDisplay();
+	    if (s.equals("0") || s.equals("0.")) return;
+	    if (s.startsWith("-")) setDisplay(s.substring(1));
+	    else setDisplay("-" + s);
+	}
+
+	private void percent() { // %
+	    double v = Double.parseDouble(getDisplay());
+	    double res = (operador == null) ? v / 100.0 : (acumulado * v / 100.0); // % tipo calculadora
+	    setDisplay(trimDouble(res));
+	    nuevaEntrada = true;
 	}
 
 }
