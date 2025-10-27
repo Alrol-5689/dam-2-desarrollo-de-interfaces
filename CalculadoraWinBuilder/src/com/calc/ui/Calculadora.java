@@ -91,7 +91,7 @@ public class Calculadora extends JFrame {
 		contentPane.add(panel, BorderLayout.CENTER);
 		panel.setLayout(new GridLayout(5, 4, 5, 5));
 
-		// --- Crear botones (sin listeners vacíos) ---
+		// --- Crear botones  ---
 		
 		btnAC = new JButton("AC");
 		btnAC.setBackground(new Color(255, 119, 113));
