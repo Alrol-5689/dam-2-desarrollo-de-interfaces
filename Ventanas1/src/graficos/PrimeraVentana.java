@@ -8,6 +8,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import java.awt.Font;
+import javax.swing.JButton;
 
 public class PrimeraVentana extends JFrame {
 
@@ -36,21 +38,30 @@ public class PrimeraVentana extends JFrame {
 	 */
 	public PrimeraVentana() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 450, 223);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JLabel lbNombre = new JLabel("Nombre: ");
+		JLabel lbNombre = new JLabel("Ventas ");
+		lbNombre.setFont(new Font("Lucida Grande", Font.PLAIN, 32));
 		lbNombre.setHorizontalAlignment(SwingConstants.CENTER);
-		lbNombre.setBounds(52, 60, 85, 37);
+		lbNombre.setBounds(151, 34, 154, 58);
 		contentPane.add(lbNombre);
 		
 		tfNombre = new JTextField();
-		tfNombre.setBounds(169, 65, 130, 26);
+		tfNombre.setBounds(105, 123, 200, 26);
 		contentPane.add(tfNombre);
 		tfNombre.setColumns(10);
+		
+		JLabel lblCliente = new JLabel("Cliente:");
+		lblCliente.setBounds(45, 126, 85, 21);
+		contentPane.add(lblCliente);
+		
+		JButton btnBuscar = new JButton("Buscar");
+		btnBuscar.setBounds(311, 123, 117, 29);
+		contentPane.add(btnBuscar);
 
 	}
 }
