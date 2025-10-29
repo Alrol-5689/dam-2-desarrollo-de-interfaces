@@ -162,9 +162,12 @@ public class Calculadora extends JFrame {
 		btnSum.setContentAreaFilled(true); 
 		panel.add(btnSum);
 		
+		// --- Asignar listeners a los botones ---
+		// lambda ("e" es un objeto/evento ActionEvent que implementa la interfaz ActionListener)
+
         ActionListener numberListener = e -> {
-            JButton src = (JButton) e.getSource();
-            appendDigit(src.getText()); // escribe el dígito
+            JButton src = (JButton) e.getSource(); // e.getSource() --> devuelve el botón que generó el evento
+            appendDigit(src.getText());            // getText() --> devuelve el texto del botón devuelto por e.getSource()
         };
 
         ActionListener opListener = e -> {
