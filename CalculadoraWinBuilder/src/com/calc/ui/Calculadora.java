@@ -166,7 +166,7 @@ public class Calculadora extends JFrame {
 		// lambda ("e" es un objeto/evento ActionEvent que implementa la interfaz ActionListener)
 
         ActionListener numberListener = e -> {
-            JButton src = (JButton) e.getSource(); // e.getSource() --> devuelve el botón que generó el evento
+            JButton src = (JButton) e.getSource(); // e.getSource() --> devuelve el botón "src" que generó el evento
             appendDigit(src.getText());            // getText() --> devuelve el texto del botón devuelto por e.getSource()
         };
 
