@@ -1,6 +1,6 @@
 # Eclipse
-# .project
-# .classpath
+.project
+.classpath
 .settings/
 .metadata/
 
