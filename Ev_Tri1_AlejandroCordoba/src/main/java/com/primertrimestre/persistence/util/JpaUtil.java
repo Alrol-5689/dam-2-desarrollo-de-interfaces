@@ -18,7 +18,7 @@ public class JpaUtil {
             synchronized (JpaUtil.class) {
                 result = emf;
                 if (result == null) {
-                    result = Persistence.createEntityManagerFactory("EvPrimerTrimestrePU");
+                    result = Persistence.createEntityManagerFactory("EvPrimerTrimestrePU-dev");
                     emf = result;
                 }
             }
