@@ -3,18 +3,21 @@ package com.primertrimestre.service;
 import java.util.List;
 
 import org.mindrot.jbcrypt.BCrypt;
-
 import com.primertrimestre.model.Student;
 import com.primertrimestre.persistence.dao.StudentDao;
-import com.primertrimestre.persistence.jpa.StudentDaoJpa;
 
 public class StudentService {
+	
+	//===>> FIELDS <<===//
 	
 	private final StudentDao studentDao;
 	private static final int BCRYPT_COST = 12;
 	
-	public StudentService(StudentDao studentDao) {this.studentDao = studentDao;} // Si no le paso un StudentDaoJpa no puede usar findByUsername?
-	public StudentService() {this.studentDao = new StudentDaoJpa();}
+	//===>> CONSTRUCTORS <<===//
+	
+	public StudentService(StudentDao studentDao) {this.studentDao = studentDao;} 
+	
+	//===>> METHODS <<===//
 	
 	public void registerStudent(Student student) {
 		if(student == null || student.getUsername() == null || student.getPassword() == null)
@@ -28,7 +31,7 @@ public class StudentService {
         studentDao.create(student);
 	}
 	public void updateStudent(Student student) {studentDao.update(student);}
-//	public void createOrUpdate(Student student) {studentDao.createOrUpdate(student);}
+
 	public void deleteStudent(Long id) {studentDao.delete(id);}
 	
 	public Student findByUsername(String username) {return studentDao.findByUsername(username);}
