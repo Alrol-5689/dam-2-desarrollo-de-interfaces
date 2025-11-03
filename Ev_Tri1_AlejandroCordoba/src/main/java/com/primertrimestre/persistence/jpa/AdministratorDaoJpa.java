@@ -1,23 +1,25 @@
 package com.primertrimestre.persistence.jpa;
 
-import com.primertrimestre.model.Teacher;
-import com.primertrimestre.persistence.dao.TeacherDao;
+import com.primertrimestre.model.Administrator;
+import com.primertrimestre.persistence.dao.AdministratorDao;
 import com.primertrimestre.persistence.util.JpaUtil;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 
-public class TeacherDaoJpa extends GenericDaoJpa<Teacher, Long> implements TeacherDao {
+public class AdministratorDaoJpa extends GenericDaoJpa<Administrator, Long> implements AdministratorDao {
 
-	public TeacherDaoJpa() {super(Teacher.class);}
+	public AdministratorDaoJpa() {
+		super(Administrator.class);
+	}
 
 	@Override
-	public Teacher findByUsername(String username) {
+	public Administrator findByUsername(String username) {
 	    if (username == null) return null;
 	    EntityManager em = JpaUtil.getEntityManager();
 	    try {
 	        return em.createQuery(
-	            "SELECT t FROM Teacher t WHERE t.username = :username", Teacher.class)
+	            "SELECT a FROM Administrator a WHERE a.username = :username", Administrator.class)
 		            .setParameter("username", username)
 		            .getSingleResult();
 	    } catch (NoResultException e) {

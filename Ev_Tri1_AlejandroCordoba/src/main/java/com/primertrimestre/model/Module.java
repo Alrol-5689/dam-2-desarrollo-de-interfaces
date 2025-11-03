@@ -1,5 +1,6 @@
 package com.primertrimestre.model;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -9,7 +10,10 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -24,7 +28,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Module {
+public class Module implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
 	
 	@Id 
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,17 +39,24 @@ public class Module {
 	@Column(nullable = false)
 	private int creditsECTS; 
 	
-	@Column(nullable = false)
+	@Column(nullable = false, length = 100)
 	private String name;
 	
 	//@Setter(AccessLevel.NONE) No hace falta porque al escribir el setter lombok lo ignora
-	@Column(nullable = false)
-	private String shortName;
+	@Column(nullable = false, unique = true, length = 10)
+	private String code;
 	
-	@ManyToMany(mappedBy = "modules", fetch = FetchType.LAZY)
-	private Set<Student> students = new HashSet<>();
+	@OneToMany(mappedBy = "module", fetch = FetchType.LAZY)
+	private Set<Enrollment> enrollments = new HashSet<>(); //==>> HashSet para que no se repita un alumno en un módulo tampoco en la lógica del programa 
 	
-	public void setShortName(String shortName) {this.shortName = shortName.toUpperCase();} // Lombok respeta este setter y no lo sobreescribe
+	@ManyToOne(fetch = FetchType.LAZY, optional = false) // Si fuera ManyToMay haríamos JoinTable creando otra tabla
+	@JoinColumn(
+			name = "teacher_id",
+			nullable = false,
+			foreignKey = @ForeignKey(name = "fk_modules_teachers"))
+	private Teacher teacher;
+	
+	public void setShortName(String shortName) {this.code = shortName.toUpperCase();} // Lombok respeta este setter y no lo sobreescribe
 	
 	
 	

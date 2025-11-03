@@ -1,11 +1,12 @@
 package com.primertrimestre.model;
 
-import java.util.List;
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,13 +20,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Teacher {
+public class Teacher extends User implements Serializable {
 	
-	@Id 
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private static final long serialVersionUID = 1L;
 	
-	private String username;
-	private List<Module> modules;
+	@OneToMany(mappedBy = "teacher", fetch = FetchType.LAZY)
+	private Set<Module> modules = new HashSet<>();
 
 }
