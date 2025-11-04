@@ -24,4 +24,8 @@ public class Student extends User{
 	@OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<Enrollment> enrollments = new HashSet<>();
 
+    @Override
+    public String toString() {
+        return fullName != null ? fullName : username;
+    }
 }

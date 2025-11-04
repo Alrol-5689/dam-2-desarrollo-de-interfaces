@@ -8,30 +8,50 @@ import com.primertrimestre.model.Administrator;
 import com.primertrimestre.model.Student;
 import com.primertrimestre.model.Teacher;
 import com.primertrimestre.service.AdministratorService;
+import com.primertrimestre.service.EnrollmentService;
+import com.primertrimestre.service.ModuleService;
 import com.primertrimestre.service.StudentService;
 import com.primertrimestre.service.TeacherService;
+import com.primertrimestre.ui.view.AdminMainFrame;
+import com.primertrimestre.ui.view.TeacherMainFrame;
+import com.primertrimestre.ui.view.StudentMainFrame;
 import com.primertrimestre.ui.view.LoginWindow;
-import com.primertrimestre.ui.view.MainFrame;
 
 public final class LoginController implements ActionListener{
 	
     private final LoginWindow view;
     private final SessionContext session;
-    private final StudentService studentServicer;
+    private final StudentService studentService;
     private final TeacherService teacherService;
     private final AdministratorService administratorService;
+    private final ModuleService moduleService;
+    private final EnrollmentService enrollmentService;
 
-    public LoginController(LoginWindow v, StudentService s, TeacherService t, AdministratorService a, SessionContext ss) {
-        this.view = v;
-        this.studentServicer = s != null ? s : null;
-        this.teacherService = t != null ? t : null;
-        this.administratorService = a != null ? a : null;
-        this.session = ss;
-        view.getBtnEnviar().addActionListener(this); // El controlador queda registrado como listener del botón Enviar
+    public LoginController(LoginWindow view, StudentService studentService, TeacherService teacherService, AdministratorService administratorService,
+                           ModuleService moduleService, EnrollmentService enrollmentService, SessionContext session) {
+        this.view = view;
+        this.studentService = studentService;
+        this.teacherService = teacherService;
+        this.administratorService = administratorService;
+        this.moduleService = moduleService;
+        this.enrollmentService = enrollmentService;
+        this.session = session;
+        view.getBtnLogin().addActionListener(this);
+        view.getBtnSingUp().addActionListener(this);
+        view.getBtnClear().addActionListener(this);
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent e) {	
+    	String command = e.getActionCommand();   	
+    	switch (command) {
+	    	case "LOGIN" -> handleLogin();
+	        case "CLEAR" -> view.clearForm();
+	        case "SINGUP" -> openRegistration();
+    	}
+    }
+    
+    private void handleLogin() {    	
         String username = view.getUserText();
         String password = view.getPasswordText();
         String userType = view.getSelectedUserType();
@@ -53,50 +73,48 @@ public final class LoginController implements ActionListener{
 	        case "Administrador" -> handleAdmin(username, password);
 	        default -> view.showError("Tipo no soportado.");
         }
-
     }
-    
 
-	private Object handleAdmin(String username, String password) {
-		
-		Administrator administrator = administratorService.authenticate(username, password);
-		if (administrator != null) {
-			session.setCurrentUser(administrator);
-			view.dispose();
-			new MainFrame(session).setVisible(true);
-		} else {
-			view.showError("Credenciales incorrectas.");
-			view.clearForm();
-		}
-		return null;
+	private void handleAdmin(String username, String password) {
+        Administrator administrator = administratorService.authenticate(username, password);
+        if (administrator != null) {
+            session.setCurrentUser(administrator);
+            view.dispose();
+            new AdminMainFrame(session, teacherService, moduleService).setVisible(true);
+        } else {
+            view.showError("Credenciales incorrectas.");
+            view.clearForm();
+        }
 	}
 
-	private Object handleTeacher(String username, String password) {
-		
-		Teacher teacher = teacherService.authenticate(username, password);
-		if (teacher != null) {
-			session.setCurrentUser(teacher);
-			view.dispose();
-			new MainFrame(session).setVisible(true);
-		} else {
-			view.showError("Credenciales incorrectas.");
-			view.clearForm();
-		}
-		return null;
+	private void handleTeacher(String username, String password) {
+        Teacher teacher = teacherService.authenticate(username, password);
+        if (teacher != null) {
+            session.setCurrentUser(teacher);
+            view.dispose();
+            new TeacherMainFrame(session, moduleService, enrollmentService).setVisible(true);
+        } else {
+            view.showError("Credenciales incorrectas.");
+            view.clearForm();
+        }
 	}
 
-	private Object handleStudent(String username, String password) {
-		
-		Student student = studentServicer.authenticate(username, password);
-		if (student != null) {
-			session.setCurrentUser(student);
-			view.dispose();
-			new MainFrame(session).setVisible(true);
-		} else {
-			view.showError("Credenciales incorrectas.");
-			view.clearForm();
-		}
-		return null;
+	private void handleStudent(String username, String password) {
+        Student student = studentService.authenticate(username, password);
+        if (student != null) {
+            session.setCurrentUser(student);
+            view.dispose();
+            new StudentMainFrame(session, moduleService, enrollmentService).setVisible(true);
+        } else {
+            view.showError("Credenciales incorrectas.");
+            view.clearForm();
+        }
 	}
+
+    private void openRegistration() {
+        session.clear();
+        view.dispose();
+        UiLauncher.showRegistration();
+    }
 
 }

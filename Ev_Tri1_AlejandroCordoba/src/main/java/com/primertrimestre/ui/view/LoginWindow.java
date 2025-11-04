@@ -9,28 +9,24 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import javax.swing.JButton;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-public class LoginWindow extends JFrame implements ActionListener {
+public class LoginWindow extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	
     // Commands
     private static final String CMD_LOGIN = "LOGIN";
     private static final String CMD_CLEAR = "CLEAR";
-    private static final String CMD_SIGNUP = "SIGNUP";
+    private static final String CMD_SINGUP = "SINGUP";
     
 	private JPanel contentPane;
 	private JPasswordField pass;
 	private JTextField user;
-	private JButton btnEnviar;
+	private JButton btnLogin;
 	private JButton btnClear;
-	private JButton btnSingup;
+	private JButton btnSingUp;
 	private JComboBox<String> userType;
-	/**
-	 * Create the frame.
-	 */
+
 	public LoginWindow() {
 		
 		setTitle("Ventana de inicio");
@@ -74,48 +70,30 @@ public class LoginWindow extends JFrame implements ActionListener {
 		
 		btnClear = new JButton("Limpiar");
 		btnClear.setActionCommand(CMD_CLEAR);
-		btnClear.addActionListener(this);
 		btnClear.setBounds(45, 219, 111, 29);
 		contentPane.add(btnClear);
 		
-		btnEnviar = new JButton("Enviar");
-		btnEnviar.setActionCommand(CMD_LOGIN);
-		btnEnviar.setBounds(166, 219, 117, 29);
-		contentPane.add(btnEnviar);
+		btnLogin = new JButton("Enviar");
+		btnLogin.setActionCommand(CMD_LOGIN);
+		btnLogin.setBounds(166, 219, 117, 29);
+		contentPane.add(btnLogin);
 		
-		btnSingup = new JButton("Inscribirse");
-		btnSingup.setActionCommand(CMD_SIGNUP);
-		btnSingup.addActionListener(this);
-		btnSingup.setBounds(295, 219, 112, 29);
-		contentPane.add(btnSingup);
+		btnSingUp = new JButton("Inscribirse");
+        btnSingUp.setActionCommand(CMD_SINGUP);
+        btnSingUp.setBounds(295, 219, 112, 29);
+        contentPane.add(btnSingUp);
 
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		String cmd = e.getActionCommand();
-        switch (cmd) {
-	        case CMD_CLEAR -> clearForm();
-	        case CMD_SIGNUP -> openRegistrationWindow();
-        }
-	}
-
-	private void openRegistrationWindow() {
-        RegistrationWindow reg = new RegistrationWindow(this);
-        reg.setModal(true); // bloquea hasta cerrar
-        reg.setVisible(true); // Cuando el usuario cierre el diálogo, el control vuelve aquí
-        // this.dispose();  // <-- Si haces esto, cierras LoginWindow
-	}
+	public JButton getBtnLogin() {return btnLogin;}
+	public JButton getBtnSingUp() {return btnSingUp;}
+	public JButton getBtnClear() {return btnClear;}
 
 	public void clearForm() {
         user.setText("");
         pass.setText("");
         userType.setSelectedIndex(0);
         user.requestFocus();
-	}
-
-	public JButton getBtnEnviar() {
-		return btnEnviar;
 	}
 
 	public String getUserText() {
@@ -134,4 +112,5 @@ public class LoginWindow extends JFrame implements ActionListener {
 	public void showError(String message) {
 		JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
 	}
+
 }

@@ -61,4 +61,8 @@ public class Module implements Serializable {
 	
 	
 
+    @Override
+    public String toString() {
+        return (code != null ? code : "SIN-CODIGO") + " - " + (name != null ? name : "Sin nombre");
+    }
 }

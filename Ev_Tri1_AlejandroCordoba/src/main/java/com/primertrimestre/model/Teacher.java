@@ -27,4 +27,8 @@ public class Teacher extends User implements Serializable {
 	@OneToMany(mappedBy = "teacher", fetch = FetchType.LAZY)
 	private Set<Module> modules = new HashSet<>();
 
+    @Override
+    public String toString() {
+        return fullName != null ? fullName : username;
+    }
 }
