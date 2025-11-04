@@ -19,13 +19,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Student extends User{
+public class Student extends User {
+	
+	private static final long serialVersionUID = 1L;
 	
 	@OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<Enrollment> enrollments = new HashSet<>();
-
-    @Override
-    public String toString() {
-        return fullName != null ? fullName : username;
-    }
+	
 }

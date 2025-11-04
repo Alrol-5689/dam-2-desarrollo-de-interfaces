@@ -1,6 +1,5 @@
 package com.primertrimestre.model;
 
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,15 +19,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Teacher extends User implements Serializable {
+public class Teacher extends User {
 	
 	private static final long serialVersionUID = 1L;
 	
 	@OneToMany(mappedBy = "teacher", fetch = FetchType.LAZY)
 	private Set<Module> modules = new HashSet<>();
 
-    @Override
-    public String toString() {
-        return fullName != null ? fullName : username;
-    }
 }
