@@ -10,10 +10,16 @@ import jakarta.persistence.EntityTransaction;
 
 public class GenericDaoJpa<T, ID> implements GenericDao<T, ID> {
 
+    //===>> FIELDS <<===//
+	
     private final Class<T> entityClass;
-
+    
+    //===>> CONSTRUCTOR <<===//
+    
     protected GenericDaoJpa(Class<T> entityClass) {this.entityClass = entityClass;}
-
+    
+    //===>> METHODS <<===//
+    
     protected EntityManager em() {return JpaUtil.getEntityManager();}
 
     @Override
