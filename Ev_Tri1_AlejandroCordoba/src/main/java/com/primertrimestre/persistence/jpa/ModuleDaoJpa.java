@@ -10,14 +10,12 @@ import jakarta.persistence.EntityManager;
 
 public class ModuleDaoJpa extends GenericDaoJpa<Module, Long> implements ModuleDao {
 
-    public ModuleDaoJpa() {
-        super(Module.class);
-    }
+    public ModuleDaoJpa() {super(Module.class);}
 
     @Override
     public List<Module> findByTeacherId(Long teacherId) {
         if (teacherId == null) return Collections.emptyList();
-        try (EntityManager em = em()) {
+        try (EntityManager em = em()) { //--> método em() de GenericDaoJpa ya que importa JpaUtil
             return em.createQuery(
                     "SELECT m FROM Module m WHERE m.teacher.id = :teacherId",
                     Module.class)

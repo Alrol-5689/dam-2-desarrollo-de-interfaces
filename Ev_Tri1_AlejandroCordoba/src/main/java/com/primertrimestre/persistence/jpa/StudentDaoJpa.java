@@ -2,7 +2,6 @@ package com.primertrimestre.persistence.jpa;
 
 import com.primertrimestre.model.Student;
 import com.primertrimestre.persistence.dao.StudentDao;
-import com.primertrimestre.persistence.util.JpaUtil;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
@@ -14,7 +13,7 @@ public class StudentDaoJpa extends GenericDaoJpa<Student, Long> implements Stude
 	@Override
 	public Student findByUsername(String username) {
 	    if (username == null) return null;
-	    EntityManager em = JpaUtil.getEntityManager();
+	    EntityManager em = em(); //--> No importamos JpaUtil porque lo hace GenericDaoJpa
 	    try {
 	        return em.createQuery(
 	            "SELECT s FROM Student s WHERE s.username = :username", Student.class)
@@ -24,13 +23,4 @@ public class StudentDaoJpa extends GenericDaoJpa<Student, Long> implements Stude
 	        return null;
 	    }
 	}
-
-//	@Override
-//	public Student findByUsernameAndPassword(String username, String password) {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
-
-
-
 }
