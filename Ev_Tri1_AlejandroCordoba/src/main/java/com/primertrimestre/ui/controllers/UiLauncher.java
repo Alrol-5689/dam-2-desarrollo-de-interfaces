@@ -1,6 +1,10 @@
 package com.primertrimestre.ui.controllers;
 
 import com.primertrimestre.auth.SessionContext;
+import com.primertrimestre.persistence.dao.StudentDao;
+import com.primertrimestre.persistence.dao.TeacherDao;
+import com.primertrimestre.persistence.dao.ModuleDao;
+import com.primertrimestre.persistence.dao.EnrollmentDao;
 import com.primertrimestre.persistence.jpa.AdministratorDaoJpa;
 import com.primertrimestre.persistence.jpa.EnrollmentDaoJpa;
 import com.primertrimestre.persistence.jpa.ModuleDaoJpa;
@@ -13,13 +17,14 @@ import com.primertrimestre.service.StudentService;
 import com.primertrimestre.service.TeacherService;
 import com.primertrimestre.ui.view.LoginWindow;
 import com.primertrimestre.ui.view.RegistrationWindow;
+import com.primertrimestre.ui.view.TeacherMainFrame;
 
 public final class UiLauncher {
     public static void showLogin() {
-        StudentDaoJpa studentDao = new StudentDaoJpa();
-        TeacherDaoJpa teacherDao = new TeacherDaoJpa();
-        ModuleDaoJpa moduleDao = new ModuleDaoJpa();
-        EnrollmentDaoJpa enrollmentDao = new EnrollmentDaoJpa();
+        StudentDao studentDao = new StudentDaoJpa();
+        TeacherDao teacherDao = new TeacherDaoJpa();
+        ModuleDao moduleDao = new ModuleDaoJpa();
+        EnrollmentDao enrollmentDao = new EnrollmentDaoJpa();
 
         StudentService studentService = new StudentService(studentDao);
         TeacherService teacherService = new TeacherService(teacherDao);
@@ -27,8 +32,31 @@ public final class UiLauncher {
         EnrollmentService enrollmentService = new EnrollmentService(enrollmentDao, studentDao, moduleDao);
         AdministratorService administratorService = new AdministratorService(new AdministratorDaoJpa());
         SessionContext session = new SessionContext();
+        
         LoginWindow view = new LoginWindow();
-        new LoginController(view, studentService, teacherService, administratorService, moduleService, enrollmentService, session);
+        
+        new LoginController(view, 
+			        		studentService, 
+			        		teacherService, 
+			        		administratorService, 
+			        		moduleService, 
+			        		enrollmentService, 
+			        		session);
+        // El constructor se registra como listener del botón Enviar, por eso no guardamos la referencia de esta instancia. 
+        view.setVisible(true);
+    }
+    
+    public static void showLogin_2() { //==>> NO RECOMENTADO crear tandos DAOs... mejor la versión larga de arriba 
+
+        LoginWindow view = new LoginWindow();
+        
+        new LoginController(view, 
+			        	    new StudentService(new StudentDaoJpa()),
+			        	    new TeacherService(new TeacherDaoJpa()),
+			        	    new AdministratorService(new AdministratorDaoJpa()),
+			        	    new ModuleService(new ModuleDaoJpa(), new TeacherDaoJpa()),
+			        	    new EnrollmentService(new EnrollmentDaoJpa(), new StudentDaoJpa(), new ModuleDaoJpa()),
+			        	    new SessionContext());
         // El constructor se registra como listener del botón Enviar, por eso no guardamos la referencia de esta instancia. 
         view.setVisible(true);
     }
@@ -46,8 +74,9 @@ public final class UiLauncher {
                 studentService,
                 teacherService,
                 administratorService,
-                UiLauncher::showLogin // TODO --> Hay que entender bien esta expresión 
+                UiLauncher::showLogin // Es lo mismo que escribir ' showLogin(); '
         );
         registrationWindow.setVisible(true);
     }
+    
 }
