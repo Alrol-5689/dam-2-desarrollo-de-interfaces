@@ -17,7 +17,6 @@ import com.primertrimestre.service.StudentService;
 import com.primertrimestre.service.TeacherService;
 import com.primertrimestre.ui.view.LoginWindow;
 import com.primertrimestre.ui.view.RegistrationWindow;
-import com.primertrimestre.ui.view.TeacherMainFrame;
 
 public final class UiLauncher {
     public static void showLogin() {
