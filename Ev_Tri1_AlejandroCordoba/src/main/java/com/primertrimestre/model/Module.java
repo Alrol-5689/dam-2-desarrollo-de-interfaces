@@ -49,10 +49,10 @@ public class Module implements Serializable {
 	@OneToMany(mappedBy = "module", fetch = FetchType.LAZY)
 	private Set<Enrollment> enrollments = new HashSet<>(); //==>> HashSet para que no se repita un alumno en un módulo tampoco en la lógica del programa 
 	
-	@ManyToOne(fetch = FetchType.LAZY, optional = false) // Si fuera ManyToMay haríamos JoinTable creando otra tabla
+	@ManyToOne(fetch = FetchType.LAZY, optional = true) // Si fuera ManyToMay haríamos JoinTable creando otra tabla
 	@JoinColumn(
 			name = "teacher_id",
-			nullable = false,
+			nullable = true,
 			foreignKey = @ForeignKey(name = "fk_modules_teachers"))
 	private Teacher teacher;
 	
