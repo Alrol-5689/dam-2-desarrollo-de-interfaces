@@ -14,10 +14,10 @@ public class LoginWindow extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	
-    // Commands
-    private static final String CMD_LOGIN = "LOGIN";
-    private static final String CMD_CLEAR = "CLEAR";
-    private static final String CMD_SINGUP = "SINGUP";
+    // Commands --> Necesito que sean public para usarlos en el controller porque el switch no me deja usar get... y no quiro usar cadenas if
+	public static final String CMD_LOGIN = "LOGIN";
+	public static final String CMD_CLEAR = "CLEAR";
+	public static final String CMD_SINGUP = "SINGUP";
     
 	private JPanel contentPane;
 	private JPasswordField pass;
