@@ -13,7 +13,6 @@ import com.primertrimestre.service.ModuleService;
 import com.primertrimestre.service.StudentService;
 import com.primertrimestre.service.TeacherService;
 import com.primertrimestre.ui.view.AdminMainFrame;
-import com.primertrimestre.ui.view.TeacherMainFrame;
 import com.primertrimestre.ui.view.StudentMainFrame;
 import com.primertrimestre.ui.view.LoginWindow;
 
@@ -27,8 +26,9 @@ public final class LoginController implements ActionListener{
     private final ModuleService moduleService;
     private final EnrollmentService enrollmentService;
 
-    public LoginController(LoginWindow view, StudentService studentService, TeacherService teacherService, AdministratorService administratorService,
-                           ModuleService moduleService, EnrollmentService enrollmentService, SessionContext session) {
+    public LoginController(LoginWindow view, StudentService studentService, 
+    					   TeacherService teacherService, AdministratorService administratorService,
+    					   ModuleService moduleService, EnrollmentService enrollmentService, SessionContext session) {
         this.view = view;
         this.studentService = studentService;
         this.teacherService = teacherService;
@@ -43,11 +43,11 @@ public final class LoginController implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {	
-    	String command = e.getActionCommand();   	
+    	String command = e.getActionCommand(); // Objet obj = e.getSource(); me gusta menos. 
     	switch (command) {
-	    	case "LOGIN" -> handleLogin();
-	        case "CLEAR" -> view.clearForm();
-	        case "SINGUP" -> openRegistration();
+	    	case LoginWindow.CMD_LOGIN  -> handleLogin();
+	        case LoginWindow.CMD_CLEAR  -> view.clearForm();
+	        case LoginWindow.CMD_SINGUP -> openRegistration();
     	}
     }
     
@@ -92,7 +92,7 @@ public final class LoginController implements ActionListener{
         if (teacher != null) {
             session.setCurrentUser(teacher);
             view.dispose();
-            new TeacherMainFrame(session, moduleService, enrollmentService).setVisible(true);
+            new TeacherController(session, moduleService, enrollmentService).showTeacherMainFrame(); // dos por uno, así no tenemos que crear un TeacherController
         } else {
             view.showError("Credenciales incorrectas.");
             view.clearForm();
