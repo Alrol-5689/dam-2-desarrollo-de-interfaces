@@ -24,15 +24,17 @@ public class App {
             //return; // no seguimos si la BD no está
         }
         // 2) Lanzar la UI
-        EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-            	try {
-            		UiLauncher.showLogin();                    
-            	} catch (Exception e) {
-            		e.printStackTrace();
-            	}
-            }
-        });
+        EventQueue.invokeLater(
+        	new Runnable() {
+	            @Override
+	            public void run() {
+	            	try {
+	            		UiLauncher.showLogin();                    
+	            	} catch (Exception e) {
+	            		e.printStackTrace();
+	            	}
+	            }
+        	}
+        );
 	}
 }
