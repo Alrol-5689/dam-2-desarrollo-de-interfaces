@@ -9,8 +9,9 @@ public class JpaUtil {
     //===>> FIELDS <<===//
 
     private static volatile EntityManagerFactory emf;
-    
-    /* 
+    /*             --------
+     				 |||
+     				 VVV
  	--> volatile <--    	
  	:> Las lecturas/escrituras van directamente a memoria principal, sin cacheos intermedios en los hilos
  	:> Cuendo un hilo actualiza emf, cualquier otro hilo ve el cambio inmediatamente 
