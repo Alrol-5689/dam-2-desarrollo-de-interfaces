@@ -18,8 +18,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
-import org.checkerframework.checker.units.qual.C;
-
 import com.primertrimestre.model.Module;
 import com.primertrimestre.model.Student;
 

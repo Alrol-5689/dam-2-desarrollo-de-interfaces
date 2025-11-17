@@ -11,7 +11,6 @@ import javax.swing.event.ListSelectionListener;
 import com.primertrimestre.auth.SessionContext;
 import com.primertrimestre.model.Student;
 import com.primertrimestre.model.Module;
-import com.primertrimestre.model.Enrollment;
 import com.primertrimestre.service.EnrollmentService;
 import com.primertrimestre.service.ModuleService;
 import com.primertrimestre.service.StudentService;
