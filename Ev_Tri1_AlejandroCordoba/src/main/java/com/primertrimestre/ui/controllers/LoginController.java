@@ -12,7 +12,7 @@ import com.primertrimestre.service.EnrollmentService;
 import com.primertrimestre.service.ModuleService;
 import com.primertrimestre.service.StudentService;
 import com.primertrimestre.service.TeacherService;
-import com.primertrimestre.ui.view.AdminMainFrame;
+import com.primertrimestre.ui.controllers.AdminController;
 import com.primertrimestre.ui.view.StudentMainFrame;
 import com.primertrimestre.ui.view.LoginWindow;
 
@@ -80,7 +80,8 @@ public final class LoginController implements ActionListener{
         if (administrator != null) {
             session.setCurrentUser(administrator);
             view.dispose();
-            new AdminMainFrame(session, teacherService, moduleService).setVisible(true);
+            new AdminController(session, teacherService, moduleService, enrollmentService)
+                .showAdminMainFrame();
         } else {
             view.showError("Credenciales incorrectas.");
             view.clearForm();
@@ -92,7 +93,8 @@ public final class LoginController implements ActionListener{
         if (teacher != null) {
             session.setCurrentUser(teacher);
             view.dispose();
-            new TeacherController(session, moduleService, enrollmentService).showTeacherMainFrame(); // dos por uno, así no tenemos que crear un TeacherController
+            new TeacherController(session, moduleService, enrollmentService)
+                .showTeacherMainFrame(); 
         } else {
             view.showError("Credenciales incorrectas.");
             view.clearForm();
@@ -104,7 +106,8 @@ public final class LoginController implements ActionListener{
         if (student != null) {
             session.setCurrentUser(student);
             view.dispose();
-            new StudentMainFrame(session, moduleService, enrollmentService).setVisible(true);
+            new StudentController(session, studentService, enrollmentService, moduleService)
+                .showStudentMainFrame();
         } else {
             view.showError("Credenciales incorrectas.");
             view.clearForm();

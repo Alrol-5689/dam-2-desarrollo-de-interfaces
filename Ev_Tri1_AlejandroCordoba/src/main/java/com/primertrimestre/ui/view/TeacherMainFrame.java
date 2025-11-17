@@ -21,7 +21,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
-import com.primertrimestre.auth.SessionContext;
 import com.primertrimestre.model.Module;
 import com.primertrimestre.model.Teacher;
 import javax.swing.JTable;
@@ -37,36 +36,54 @@ public class TeacherMainFrame extends JFrame { // No implemento ActionListener p
     public static final String VIEW_TYPE_MY_MODULES = "Módulos que imparto";
     public static final String VIEW_TYPE_ALL_MODULES = "Todos los módulos";
 
-    private final SessionContext session;
     private Teacher teacher;
 	private JPanel contentPane;
 	private JButton btnLogout;
-	private JLabel teacherName;
+	private JLabel lblTeacherName;
 	private JPanel footerPanel;
 	private JPanel mainCenterPanel;
 	private JComboBox<String> comboBoxViewType;
 	private JButton btnRefresh;
 	private JButton btnSaveNotes;
-	private final DefaultTableModel studentTableModel = new DefaultTableModel(new Object[] {"ID", "Nick", "Nombre", "Nota"}, 0) { // {columna1, columna2...}, 0 filas iniciales
-		private static final long serialVersionUID = 1L;
-		@Override
-		public boolean isCellEditable(int row, int column) {
-			return column == 3; // Sólo la columna de nota se puede editar
-		}
-	};
+    /*
+    studentTableModel: modelo de la tabla de estudiantes
+        new DefaultTableModel(new Object[] {columnas}, filas iniciales) {
+                crea un modelo de tabla con las columnas indicadas y 0 filas iniciales
+            }
+        extends DefaultTableModel: crea una clase anónima que extiende DefaultTableModel para sobreescribir métodos
+        isCellEditable(int row, int column): método que indica si una celda es editable o no
+    studentsTable: tabla de estudiantes
+    studentsDates: array de String que guarda los datos de una fila de la tabla
+     */
+	private final DefaultTableModel studentTableModel = 
+        new DefaultTableModel(new Object[] {"ID", "Nick", "Nombre", "Nota"}, 0) { 
+            private static final long serialVersionUID = 1L;
+            @Override
+            public boolean isCellEditable(int row, int column) {return column == 3; }
+            // Sólo la columna de nota se puede editar
+	    };
 	private JTable studentsTable;
-	private final String[] studentsDates = new String[4];
+	private final String[] studentRow = new String[4]; 
+    /*
+     * moduleListModel: modelo de la lista de módulos
+     * moduleList: lista de módulos
+     */
 	private final DefaultListModel<Module> moduleListModel = new DefaultListModel<>();
 	private final JList<Module> moduleList = new JList<>(moduleListModel);
+	
+    // ========================================================================
+    // CONSTRUCTOR
+    // ========================================================================
 
-    public TeacherMainFrame(SessionContext session) {
-        if (session == null || !(session.getCurrentUser() instanceof Teacher teacher)) {
-            throw new IllegalArgumentException("La sesión debe contener un profesor autenticado");
+    public TeacherMainFrame(Teacher teacher) {
+        if (teacher == null) {
+            throw new IllegalArgumentException(
+                "La vista TeacherMainFrame requiere un profesor válido");
         }
-        this.session = session;
-        this.setTeacher(teacher);
+        setTeacher(teacher);
     	
-    	setTitle("Ventana de profesores");
+    	setTitle("Ventana de profesores - " 
+            + (teacher.getFullName() != null ? teacher.getFullName() : teacher.getUsername()));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1000, 581);
 		
@@ -80,14 +97,18 @@ public class TeacherMainFrame extends JFrame { // No implemento ActionListener p
 		buildFooter();
     }
 
+    // ========================================================================
+    // BUILD UI
+    // ========================================================================
+
     private void buildHeader() {
         JPanel header = new JPanel(new BorderLayout());
         contentPane.add(header, BorderLayout.NORTH);
 
-        teacherName = new JLabel(resolveTeacherDisplayName(teacher));
-        teacherName.setBorder(new EmptyBorder(0, 10, 0, 10));
-        teacherName.setHorizontalAlignment(SwingConstants.LEFT);
-        header.add(teacherName, BorderLayout.WEST);
+        lblTeacherName = new JLabel(resolveTeacherDisplayName(teacher));
+        lblTeacherName.setBorder(new EmptyBorder(0, 10, 0, 10));
+        lblTeacherName.setHorizontalAlignment(SwingConstants.LEFT);
+        header.add(lblTeacherName, BorderLayout.WEST);
 
         btnLogout = new JButton("Cerrar sesión");
         btnLogout.setActionCommand(CMD_LOGOUT);
@@ -98,6 +119,13 @@ public class TeacherMainFrame extends JFrame { // No implemento ActionListener p
         mainCenterPanel = new JPanel(new GridLayout(1, 2));
         contentPane.add(mainCenterPanel, BorderLayout.CENTER);
         mainCenterPanel.add(buildModulesPanel());
+
+        /* === ¿por qué no .add(modulesPanel) directamente? ===
+            lo que hacemos aquí es lo mismo que escribir:
+
+                JPanel modulesPanel = buildModulesPanel();
+                mainCenterPanel.add(modulesPanel);*/
+
         mainCenterPanel.add(buildStudentsPanel());
     }
 
@@ -167,14 +195,6 @@ public class TeacherMainFrame extends JFrame { // No implemento ActionListener p
     
     //==>> METHODS (TEACHER AND MODULES) <<==//
 
-    public void refreshTeacherFromSession() {
-        Object current = session.getCurrentUser();
-        if (current instanceof Teacher updatedTeacher) { // comprueba que sea Teacher y si sí, expone variable
-            setTeacher(updatedTeacher);
-            teacherName.setText(resolveTeacherDisplayName(updatedTeacher));
-        }
-    }
-   
     private String resolveTeacherDisplayName(Teacher teacher) {
         if (teacher == null) return "Profesor desconocido";
         return teacher.getFullName() != null && !teacher.getFullName().isBlank()
@@ -193,12 +213,15 @@ public class TeacherMainFrame extends JFrame { // No implemento ActionListener p
     }
     
     public void addModuleSelectionListener(ListSelectionListener listener) {
-        // Permite al controller enterarse cuando el profesor cambia de módulo en la lista.
         moduleList.addListSelectionListener(listener);
+        // moduleList recibe un ListSelectionListener del controller 
+        // Permite al controller enterarse cuando el profesor cambia de módulo en la lista.
     }
 
     public void addViewTypeListener(ActionListener listener) {
-        // Se dispara cada vez que el combo "Mostrar" cambia, para que el controller filtre módulos.
+        // El TeacherController registra aquí su ActionListener en showTeacherMainFrame().
+        // Cada vez que el usuario cambie el combo "Mostrar", se ejecutará ese listener
+        // y el controller decidirá si cargar todos los módulos o solo los del profesor.
         comboBoxViewType.addActionListener(listener);
     }
 
@@ -213,12 +236,14 @@ public class TeacherMainFrame extends JFrame { // No implemento ActionListener p
         studentTableModel.setRowCount(0);
     }
     
-    public void addStudentRow(Long studentId, String username, String fullName, Double grade) { // No le paso un estudiando porque la view solo ve sesionContext 
-    	studentsDates[0] = studentId != null ? studentId.toString() : "";
-    	studentsDates[1] = username != null ? username : "";
-    	studentsDates[2] = fullName != null ? fullName : "";
-    	studentsDates[3] = grade != null ? grade.toString() : "";
-        studentTableModel.addRow(studentsDates.clone()); // clone() crea una copia para que cada fila mantenga su propio array y no se sobrescriba al reutilizar studentsDates
+    public void addStudentRow(Long studentId, String username, String fullName, Double grade) { 
+    	studentRow[0] = studentId != null ? studentId.toString() : "";
+    	studentRow[1] = username != null ? username : "";
+    	studentRow[2] = fullName != null ? fullName : "";
+    	studentRow[3] = grade != null ? grade.toString() : "";
+        studentTableModel.addRow(studentRow.clone()); 
+        /*clone() crea una copia para que cada fila mantenga su propio array 
+        y no se sobrescriba al reutilizar studentRow*/
     }
     
     public int getSelectedStudentRow() {
@@ -247,9 +272,16 @@ public class TeacherMainFrame extends JFrame { // No implemento ActionListener p
     public JButton getBtnRefresh() {return btnRefresh;}
 
     public Teacher getTeacher() {return teacher;}
-    public void setTeacher(Teacher teacher) {this.teacher = teacher;}
+    public void setTeacher(Teacher teacher) {
+        this.teacher = teacher;
+        if (this.lblTeacherName != null) {
+            this.lblTeacherName.setText(resolveTeacherDisplayName(teacher));
+        }
+    }
 
-    //==>> DIALOGS <<==//
+    // ========================================================================
+    // HELPERS DIALOG
+    // ========================================================================
     
     public void showInfo(String message) {
         JOptionPane.showMessageDialog(this, message, "Información", JOptionPane.INFORMATION_MESSAGE);

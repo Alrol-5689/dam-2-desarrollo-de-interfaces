@@ -46,26 +46,28 @@ public class EnrollmentService {
         enrollment.setStudent(student);
         enrollment.setModule(module);
         enrollment.setGrade(null);
-        if (student.getEnrollments() != null) {
-            student.getEnrollments().add(enrollment);
-        }
-        if (module.getEnrollments() != null) {
-            module.getEnrollments().add(enrollment);
-        }
+        // JPA gestiona la relación sin tocar colecciones lazy fuera de sesión.
+        // if (student.getEnrollments() != null) {
+        //     student.getEnrollments().add(enrollment);
+        // }
+        // if (module.getEnrollments() != null) {
+        //     module.getEnrollments().add(enrollment);
+        // }
         return enrollmentDao.create(enrollment);
     }
 
     public void unenrollStudent(Long studentId, Long moduleId) {
         Enrollment enrollment = enrollmentDao.findByStudentAndModule(studentId, moduleId);
         if (enrollment != null) {
-            Module module = enrollment.getModule();
-            Student student = enrollment.getStudent();
-            if (student != null && student.getEnrollments() != null) {
-                student.getEnrollments().remove(enrollment);
-            }
-            if (module != null && module.getEnrollments() != null) {
-                module.getEnrollments().remove(enrollment);
-            }
+            // Evitamos tocar colecciones lazy fuera de sesión.
+            // Module module = enrollment.getModule();
+            // Student student = enrollment.getStudent();
+            // if (student != null && student.getEnrollments() != null) {
+            //     student.getEnrollments().remove(enrollment);
+            // }
+            // if (module != null && module.getEnrollments() != null) {
+            //     module.getEnrollments().remove(enrollment);
+            // }
             enrollmentDao.delete(enrollment.getId());
         }
     }
@@ -75,5 +77,9 @@ public class EnrollmentService {
         if (enrollment == null) throw new IllegalArgumentException("Enrollment not found");
         enrollment.setGrade(grade);
         return enrollmentDao.update(enrollment);
+    }
+
+    public List<Module> availableModules(Long studentId) {
+        return (List<Module>) enrollmentDao.findAvailableModulesByStudentId(studentId);
     }
 }

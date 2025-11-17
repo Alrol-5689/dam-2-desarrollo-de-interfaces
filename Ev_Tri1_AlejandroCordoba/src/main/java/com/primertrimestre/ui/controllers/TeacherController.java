@@ -32,32 +32,80 @@ public class TeacherController implements ActionListener {
 							 EnrollmentService enrollmentService) {
 		this.session = session;
 		this.moduleService = moduleService;
-		this.enrollmentService = enrollmentService;	
+		this.enrollmentService = enrollmentService;
+        // El combo "Mostrar" vive en la vista; todavía no tenemos la instancia aquí.
+        // Cuando showTeacherMainFrame() cree la ventana, usaremos addViewTypeListener
+        // para conectar el action listener que decide qué módulos ver.
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String command = e.getActionCommand();
 		switch (command) {
-			case TeacherMainFrame.CMD_REFRESH -> refresh();
-			case TeacherMainFrame.CMD_SAVE -> saveNotes();
 			case TeacherMainFrame.CMD_LOGOUT -> logout();
+			case TeacherMainFrame.CMD_SAVE -> saveNotes();
+			case TeacherMainFrame.CMD_REFRESH -> refresh();
 		}
 	}
 	
 	public void showTeacherMainFrame() {
-        view = new TeacherMainFrame(session);
-        view.getBtnLogout().addActionListener(this);   // Botón superior de cerrar sesión
-        view.getBtnRefresh().addActionListener(this);  // Botón inferior de refrescar datos
-        view.getBtnSaveNotes().addActionListener(this); // Botón inferior para guardar la nota editada     
-        view.addModuleSelectionListener(new ListSelectionListener() { // Reaccionar cuando el profe cambia el módulo seleccionado
-        	@Override
-        	public void valueChanged(ListSelectionEvent event) {onModuleSelected(event);}
-        });        
-        view.addViewTypeListener(new ActionListener() { // Cambiar la lista de módulos según el filtro del combo
-        	@Override
-        	public void actionPerformed(ActionEvent e) {refreshModules();}
-        });       
+        Teacher currentTeacher = resolveCurrentTeacher();
+        view = new TeacherMainFrame(currentTeacher);
+        view.getBtnLogout().addActionListener(this);    // Botón superior de cerrar sesión
+        view.getBtnRefresh().addActionListener(this);   // Botón inferior de refrescar datos
+        view.getBtnSaveNotes().addActionListener(this); // Botón inferior para guardar la nota editada    
+        view.getBtnSaveNotes().setEnabled(false);       // setEnabled(false) desactiva el botón hasta que haya un módulo del profesor
+
+        //=== [ DIFÍCIL DE ENTENDER ] ======================================================
+
+        /*
+        La vista no sabe qué hacer cuando cambia el módulo o el filtro,
+        así que nos expone métodos para "enchufar" nuestros listeners:
+
+           1. addModuleSelectionListener -> nos avisa cuando el usuario
+              hace clic en otro módulo de la lista de la izquierda.
+              El evento que llega aquí es ListSelectionEvent (propio de JList),
+              y lo tratamos delegando en onModuleSelected(...), que a su vez
+              carga los alumnos del nuevo módulo.
+
+           2. addViewTypeListener -> nos avisa cuando cambia el combo "Mostrar".
+              Ese combo lanza eventos ActionEvent; en respuesta solo necesitamos
+              recalcular la lista de módulos visibles, así que llamamos a refreshModules().
+
+        No usamos "this" como listener porque TeacherController ya está ocupando
+        su actionPerformed para los botones y no implementa ListSelectionListener.
+        */
+
+        view.addModuleSelectionListener(
+            new ListSelectionListener() { // Reaccionar cuando el profe cambia el módulo seleccionado
+                @Override
+                public void valueChanged(ListSelectionEvent event) { // JList -> ListSelectionEvent
+                    onModuleSelected(event);
+                }
+            }
+        );  // ListSelectionListener para la lista de módulos     
+
+        view.addViewTypeListener(
+            // le pasamos al método un ActionListener anónimo que refresca la lista de módulos
+            new ActionListener() { // Cambiar la lista de módulos según el filtro del combo
+                @Override
+                public void actionPerformed(ActionEvent e) { // cuando se selecciona una opción del combo
+                    refreshModules(); // cada vez que se cambia el tipo de vista, recargamos los módulos
+                }
+            }
+        );  
+
+        /* ActionListener -> actionPerformed(ActionEvent e)
+             ActionEvent -> tiene método getActionCommand(), getSource()...
+                 getSource() -> botón que lanzó el evento
+                 getActionCommand() -> TeacherMainFrame.CMD_LOGOUT = "LOGOUT"... */
+
+        /* ListSelectionListener -> valueChanged(ListSelectionEvent event)
+             ListSelectionEvent -> tiene método getValueIsAdjusting(), etc.
+                 getValueIsAdjusting() -> true si el usuario todavía está arrastrando el ratón */
+        
+        //==================================================================================
+
         refreshModules(); 
         view.setVisible(true);
 	}
@@ -72,6 +120,7 @@ public class TeacherController implements ActionListener {
     private void loadStudentsForSelectedModule() {
         view.clearStudents();
         Module selectedModule = view.getSelectionModule();
+        updateSaveNotesAvailability(selectedModule);
         if (selectedModule == null) return;
         List<Enrollment> enrollments = enrollmentService.listByModule(selectedModule.getId());
         for (Enrollment e : enrollments) {
@@ -89,12 +138,13 @@ public class TeacherController implements ActionListener {
 	}
 
     private void refreshModules() {
-        List<Module> modules = resolveModulesForCurrentFilter();
+        List<Module> modules = resolveModulesForCurrentFilter(); // obtenemos los módulos según el filtro actual
         view.setModules(modules); // le metemos los modulos que mostrar
+        updateSaveNotesAvailability(view.getSelectionModule());
     }
 
     private List<Module> resolveModulesForCurrentFilter() {
-        Teacher teacher = session.getCurrentUser() instanceof Teacher t ? t : null;
+        Teacher teacher = getCurrentTeacherOrNull();
         if (teacher == null) {
             return Collections.emptyList();
         }
@@ -103,10 +153,35 @@ public class TeacherController implements ActionListener {
         return showAll ? moduleService.listAll() : moduleService.listByTeacher(teacher.getId());
     }
 
-	private void saveNotes() {
+    private void updateSaveNotesAvailability(Module selectedModule) {
+        boolean canEdit = isModuleOwnedByCurrentTeacher(selectedModule);
+        view.getBtnSaveNotes().setEnabled(canEdit); // setEnabled(canEdit) habilita o bloquea el botón según si puede editar
+    }
+
+    private boolean isModuleOwnedByCurrentTeacher(Module module) {
+        Teacher teacher = getCurrentTeacherOrNull();
+        if (teacher == null || module == null) {
+            return false;
+        }
+        Teacher moduleTeacher = module.getTeacher();
+        return moduleTeacher != null
+                && moduleTeacher.getId() != null
+                && moduleTeacher.getId().equals(teacher.getId());
+    }
+
+    private Teacher getCurrentTeacherOrNull() {
+        Object current = session.getCurrentUser();
+        return current instanceof Teacher t ? t : null;
+    }
+
+	private void saveNotes() { 
         Module selectedModule = view.getSelectionModule();
         if (selectedModule == null) {
             view.showInfo("Seleccione un módulo antes de guardar notas.");
+            return;
+        }
+        if (!isModuleOwnedByCurrentTeacher(selectedModule)) {
+            view.showError("Solo puede modificar las notas de tus alumnos.");
             return;
         }
         int selectedRow = view.getSelectedStudentRow();
@@ -135,10 +210,19 @@ public class TeacherController implements ActionListener {
         }
 	}
 
-	private void logout() {
+    private void logout() {
         session.clear();
         view.dispose();
-        SwingUtilities.invokeLater(UiLauncher::showLogin); // qué es SwingUtilities y por qué no simplemente UiLauncher.showLogin()?
+        SwingUtilities.invokeLater(UiLauncher::showLogin); 
+        // qué es SwingUtilities y por qué no simplemente UiLauncher.showLogin()?
     }
 
+    private Teacher resolveCurrentTeacher() {
+        Object current = session.getCurrentUser();
+        if (current instanceof Teacher teacher) {
+            return teacher;
+        }
+        throw new IllegalStateException(
+            "La sesión debe contener un profesor para mostrar la vista de docente.");
+    }
 }

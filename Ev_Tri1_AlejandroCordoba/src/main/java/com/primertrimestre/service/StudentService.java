@@ -3,6 +3,8 @@ package com.primertrimestre.service;
 import java.util.List;
 
 import org.mindrot.jbcrypt.BCrypt;
+
+import com.primertrimestre.model.Module;
 import com.primertrimestre.model.Student;
 import com.primertrimestre.persistence.dao.StudentDao;
 
@@ -56,6 +58,12 @@ public class StudentService {
         String hashed = BCrypt.hashpw(newPassword, BCrypt.gensalt(BCRYPT_COST));
         st.setPassword(hashed);
         studentDao.update(st);
+    }
+
+    public List<Module> getEnrolledModules(Long id) {
+        Student st = studentDao.findById(id);
+        if (st == null) throw new IllegalArgumentException("Student not found");
+        return ((StudentDao) studentDao).findEnrolledModulesByStudentId(id);
     }
 
 }

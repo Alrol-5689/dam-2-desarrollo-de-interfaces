@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.primertrimestre.model.Enrollment;
+import com.primertrimestre.model.Module;
 import com.primertrimestre.persistence.dao.EnrollmentDao;
 
 import jakarta.persistence.EntityManager;
@@ -56,6 +57,22 @@ public class EnrollmentDaoJpa extends GenericDaoJpa<Enrollment, Long> implements
                     .getSingleResult();
         } catch (NoResultException ex) {
             return null;
+        }
+    }
+
+    @Override
+    public List<Module> findAvailableModulesByStudentId(Long studentId) {
+        if (studentId == null) return Collections.emptyList();
+        try (EntityManager em = em()) {
+            return em.createQuery(
+                    "SELECT m FROM Module m "
+                    + "WHERE NOT EXISTS ("
+                    + "    SELECT 1 FROM Enrollment e "
+                    + "    WHERE e.module = m AND e.student.id = :studentId"
+                    + ")",
+                    Module.class)
+                    .setParameter("studentId", studentId)
+                    .getResultList();
         }
     }
 }

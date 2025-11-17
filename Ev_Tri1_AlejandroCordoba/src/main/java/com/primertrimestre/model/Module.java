@@ -6,7 +6,6 @@ import java.util.Set;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -46,10 +45,10 @@ public class Module implements Serializable {
 	@Column(nullable = false, unique = true, length = 10)
 	private String code;
 	
-	@OneToMany(mappedBy = "module", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "module")
 	private Set<Enrollment> enrollments = new HashSet<>(); //==>> HashSet para que no se repita un alumno en un módulo tampoco en la lógica del programa 
 	
-	@ManyToOne(fetch = FetchType.LAZY, optional = true) // Si fuera ManyToMay haríamos JoinTable creando otra tabla
+	@ManyToOne(optional = true) // Si fuera ManyToMay haríamos JoinTable creando otra tabla
 	@JoinColumn(
 			name = "teacher_id",
 			nullable = true,
@@ -57,9 +56,6 @@ public class Module implements Serializable {
 	private Teacher teacher;
 	
 	public void setShortName(String shortName) {this.code = shortName.toUpperCase();} // Lombok respeta este setter y no lo sobreescribe
-	
-	
-	
 
     @Override
     public String toString() {
