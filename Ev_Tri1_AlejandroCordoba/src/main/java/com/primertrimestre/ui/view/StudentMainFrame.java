@@ -1,6 +1,7 @@
 package com.primertrimestre.ui.view;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.util.List;
 
@@ -68,7 +69,8 @@ public class StudentMainFrame extends JFrame {
     	setTitle("Ventana de alumnos - " 
             + (student.getFullName() != null ? student.getFullName() : student.getUsername()));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 947, 595);
+		setMinimumSize(new Dimension(850, 500));
+		setBounds(100, 100, 0, 0);
 
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));

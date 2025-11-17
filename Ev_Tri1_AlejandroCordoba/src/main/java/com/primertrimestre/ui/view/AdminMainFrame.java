@@ -25,6 +25,7 @@ import com.primertrimestre.model.Administrator;
 import com.primertrimestre.model.Module;
 import com.primertrimestre.model.Teacher;
 import java.awt.Color;
+import java.awt.Dimension;
 
 public class AdminMainFrame extends JFrame {
 
@@ -92,8 +93,9 @@ public class AdminMainFrame extends JFrame {
         }
         setTitle("Panel administrador - " + (admin.getFullName() != null ? admin.getFullName() : admin.getUsername()));
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setMinimumSize(new Dimension(720, 700));
         //setSize(900, 500);
-        setBounds(100, 100, 1086, 710); // change
+        setBounds(100, 100, 850, 0); //==>> setMinimumSize
         setLocationRelativeTo(null);
 
         buildRoot();
@@ -115,6 +117,7 @@ public class AdminMainFrame extends JFrame {
 
     private void buildHeader(Administrator admin) {
         JPanel header = new JPanel(new BorderLayout(0, 0));
+        header.setBorder(new EmptyBorder(0, 12, 75, 12));
         contentPane.add(header, BorderLayout.NORTH);
 
         lblAdminName = new JLabel(
@@ -166,6 +169,7 @@ public class AdminMainFrame extends JFrame {
 
         // --- Lado izquierdo: lista de módulos + eliminar ---
         JPanel modulesListPanel = new JPanel(new BorderLayout(0, 0));
+        modulesListPanel.setBorder(new EmptyBorder(0, 15, 0, 15));
         modulesCardPanel.add(modulesListPanel);
 
         JPanel modulesListHeaderPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
@@ -190,6 +194,7 @@ public class AdminMainFrame extends JFrame {
 
         // --- Lado derecho: crear nuevo módulo ---
         JPanel createModulePanel = new JPanel(new BorderLayout(0, 0));
+        createModulePanel.setBorder(new EmptyBorder(0, 15, 0, 15));
         modulesCardPanel.add(createModulePanel);
 
         JPanel createModuleHeader = new JPanel(new GridLayout(2, 1, 0, 0));
@@ -199,6 +204,7 @@ public class AdminMainFrame extends JFrame {
         createModuleHeader.add(createModuleTitlePanel);
 
         JLabel lblCreateModuleTitle = new JLabel("CREAR NUEVO MÓDULO");
+        lblCreateModuleTitle.setBorder(new EmptyBorder(100, 0, 0, 0));
         createModuleTitlePanel.add(lblCreateModuleTitle);
 
         JPanel createModuleFormPanel = new JPanel(new BorderLayout(0, 0));
@@ -242,7 +248,7 @@ public class AdminMainFrame extends JFrame {
         JPanel createModuleCenterPanel = new JPanel(new GridLayout(3, 2, 10, 10));
         createModulePanel.add(createModuleCenterPanel, BorderLayout.CENTER);
 
-        JPanel createModuleFooterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel createModuleFooterPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         createModulePanel.add(createModuleFooterPanel, BorderLayout.SOUTH);
 
         btnCreateModule = new JButton("Crear módulo");
@@ -254,11 +260,11 @@ public class AdminMainFrame extends JFrame {
     }
 
     private JPanel buildTeachersCard() {
-        JPanel teacherAssignmentPanel = new JPanel(new BorderLayout(0, 0));
+        JPanel teacherAssignmentCardPanel = new JPanel(new BorderLayout(0, 0));
 
         JPanel teacherHeaderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
         teacherHeaderPanel.setBorder(new EmptyBorder(0, 12, 0, 0));
-        teacherAssignmentPanel.add(teacherHeaderPanel, BorderLayout.NORTH);
+        teacherAssignmentCardPanel.add(teacherHeaderPanel, BorderLayout.NORTH);
 
         JLabel lblTeacher = new JLabel("Profesor: ");
         teacherHeaderPanel.add(lblTeacher);
@@ -267,7 +273,7 @@ public class AdminMainFrame extends JFrame {
         teacherHeaderPanel.add(comboBoxTeachers);
 
         JPanel teacherCenterPanel = new JPanel(new GridLayout(0, 2, 10, 0));
-        teacherAssignmentPanel.add(teacherCenterPanel, BorderLayout.CENTER);
+        teacherAssignmentCardPanel.add(teacherCenterPanel, BorderLayout.CENTER);
 
         // --- Columna izquierda: módulos sin profesor ---
         JPanel unassignedModulesPanel = new JPanel(new BorderLayout(0, 0));
@@ -309,11 +315,12 @@ public class AdminMainFrame extends JFrame {
         assignedFooterPanel.add(btnRemoveTeacherFromModule);
         assignedModulesPanel.add(assignedFooterPanel, BorderLayout.SOUTH);
 
-        return teacherAssignmentPanel;
+        return teacherAssignmentCardPanel;
     }
 
     private void buildFooter() {
         JPanel south = new JPanel(new GridLayout(0, 2, 0, 0));
+        south.setBorder(new EmptyBorder(75, 12, 0, 12));
         contentPane.add(south, BorderLayout.SOUTH);
 
         btnRefresh = new JButton("Refrescar");

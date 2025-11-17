@@ -1,6 +1,7 @@
 package com.primertrimestre.ui.view;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.util.List;
 
@@ -85,6 +86,7 @@ public class TeacherMainFrame extends JFrame { // No implemento ActionListener p
     	setTitle("Ventana de profesores - " 
             + (teacher.getFullName() != null ? teacher.getFullName() : teacher.getUsername()));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setMinimumSize(new Dimension(850, 500));
 		setBounds(100, 100, 1000, 581);
 		
 		contentPane = new JPanel();
@@ -117,6 +119,7 @@ public class TeacherMainFrame extends JFrame { // No implemento ActionListener p
 
     private void buildMainPanels() {
         mainCenterPanel = new JPanel(new GridLayout(1, 2));
+        mainCenterPanel.setBorder(new EmptyBorder(50, 25, 50, 25));
         contentPane.add(mainCenterPanel, BorderLayout.CENTER);
         mainCenterPanel.add(buildModulesPanel());
 
@@ -133,7 +136,7 @@ public class TeacherMainFrame extends JFrame { // No implemento ActionListener p
 
     private JPanel buildModulesPanel() {
         JPanel modulesPanel = new JPanel(new BorderLayout());
-        modulesPanel.setBorder(new EmptyBorder(2, 2, 2, 2));
+        modulesPanel.setBorder(new EmptyBorder(2, 2, 2, 10));
 
         JPanel modulesPanelNorth = new JPanel(new BorderLayout());
         modulesPanelNorth.setBorder(new EmptyBorder(3, 3, 3, 3));
@@ -160,7 +163,7 @@ public class TeacherMainFrame extends JFrame { // No implemento ActionListener p
 
     private JPanel buildStudentsPanel() {
         JPanel studentsPanel = new JPanel(new BorderLayout());
-        studentsPanel.setBorder(new EmptyBorder(2, 2, 2, 2));
+        studentsPanel.setBorder(new EmptyBorder(2, 10, 2, 2));
 
         JPanel studentsPanelNorth = new JPanel();
         studentsPanelNorth.setBorder(new EmptyBorder(3, 3, 4, 3));
