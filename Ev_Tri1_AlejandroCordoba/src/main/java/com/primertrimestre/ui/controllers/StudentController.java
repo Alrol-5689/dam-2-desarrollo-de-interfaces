@@ -51,10 +51,10 @@ public class StudentController implements ActionListener {
         view = new StudentMainFrame(currentStudent);
         view.getBtnLogout().addActionListener(this);
         view.getBtnEnrollInModule().addActionListener(this);
+        view.getBtnEnrollInModule().setEnabled(false);
         view.getBtnUnsubscribeFromModule().addActionListener(this);
         view.getBtnRefresh().addActionListener(this);
         view.getBtnSave().addActionListener(this);
-        view.getBtnEnrollInModule().setEnabled(false);
         view.getBtnUnsubscribeFromModule().setEnabled(false);
 
         view.addAvailableModuleSelectionListener(
@@ -76,6 +76,7 @@ public class StudentController implements ActionListener {
                     if (e.getValueIsAdjusting()) {
                         return;
                     }
+                    // La primera fila es la 0; si no hay selección, devuelve -1
                     boolean hasSelection = view.getEnrolledTable().getSelectedRow() >= 0;
                     view.getBtnUnsubscribeFromModule().setEnabled(hasSelection);
                 }
