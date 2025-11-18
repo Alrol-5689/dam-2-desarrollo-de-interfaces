@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.SwingUtilities;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import com.primertrimestre.auth.SessionContext;
 import com.primertrimestre.model.Administrator;
@@ -73,11 +75,45 @@ public class AdminController implements ActionListener {
         view.getBtnDeleteModule().addActionListener(this);
         view.getBtnCreateModule().addActionListener(this);
         view.getBtnAssignModuleToTeacher().addActionListener(this);
+		view.getBtnAssignModuleToTeacher().setEnabled(false);
         view.getBtnRemoveTeacherFromModule().addActionListener(this);
+		view.getBtnRemoveTeacherFromModule().setEnabled(false);
         view.getBtnRefresh().addActionListener(this);
         view.getBtnSave().addActionListener(this);
-        view.addTeacherSelectionListener(e -> refreshModuleListsForSelectedTeacher());
-    }
+		/*
+		view.addTeacherSelectionListener(e -> refreshModuleListsForSelectedTeacher()); */ 
+		view.addTeacherSelectionListener( // combobox de selección de profesor
+			new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					refreshModuleListsForSelectedTeacher();
+				}
+			}
+		);
+
+		// Solo para el setEnabled de los botones de asignar / eliminar profesor-módulo:
+
+		view.addSelectedUnassignedModuleListener(
+			new ListSelectionListener() {
+				@Override
+				public void valueChanged(ListSelectionEvent e) {
+					boolean hasSelection = !view.getListUnassignedModules().isSelectionEmpty();
+					//boolean hasSelection = view.getSelectedUnassignedModule() != null;
+					view.getBtnAssignModuleToTeacher().setEnabled(hasSelection);
+				}
+			}
+		);
+		view.addSelectedAssignedModuleListener(
+			new ListSelectionListener() {
+				@Override
+				public void valueChanged(ListSelectionEvent e) {
+					boolean hasSelection = !view.getListAssignedModules().isSelectionEmpty();
+					//boolean hasSelection = view.getSelectedAssignedModule() != null;
+					view.getBtnRemoveTeacherFromModule().setEnabled(hasSelection);
+				}
+			}
+		);
+	}
 
 	private void save() {
         /* 

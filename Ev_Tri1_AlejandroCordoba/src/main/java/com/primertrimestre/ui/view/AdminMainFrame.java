@@ -19,6 +19,8 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionListener;
+
 import java.awt.event.ActionListener;
 
 import com.primertrimestre.model.Administrator;
@@ -74,8 +76,10 @@ public class AdminMainFrame extends JFrame {
     private JComboBox<Teacher> comboBoxTeachers;
     private DefaultListModel<Module> modulesWithoutTeacherModel = new DefaultListModel<>();
     private DefaultListModel<Module> modulesForTeacherModel    = new DefaultListModel<>();
+    
     private JList<Module> listUnassignedModules;
     private JList<Module> listAssignedModules;
+
     private JButton btnAssignModuleToTeacher;
     private JButton btnRemoveTeacherFromModule;
 
@@ -117,7 +121,7 @@ public class AdminMainFrame extends JFrame {
 
     private void buildHeader(Administrator admin) {
         JPanel header = new JPanel(new BorderLayout(0, 0));
-        header.setBorder(new EmptyBorder(0, 12, 75, 12));
+        header.setBorder(new EmptyBorder(0, 12, 60, 12));
         contentPane.add(header, BorderLayout.NORTH);
 
         lblAdminName = new JLabel(
@@ -140,7 +144,7 @@ public class AdminMainFrame extends JFrame {
 
         // Panel de botones para cambiar de card
         JPanel cardChangePanel = new JPanel();
-        cardChangePanel.setBorder(new EmptyBorder(0, 0, 20, 0));
+        cardChangePanel.setBorder(new EmptyBorder(0, 0, 35, 0));
         FlowLayout fl_cardChangePanel = (FlowLayout) cardChangePanel.getLayout();
         fl_cardChangePanel.setAlignment(FlowLayout.LEFT);
         center.add(cardChangePanel, BorderLayout.NORTH);
@@ -336,15 +340,7 @@ public class AdminMainFrame extends JFrame {
     // PUBLIC API FOR CONTROLLER
     // ========================================================================
 
-    public JButton getBtnLogout() { return btnLogout; }
-    public JButton getBtnManageModules() { return btnManageModules; }
-    public JButton getBtnAssignTeachers() { return btnAssignTeachers; }
-    public JButton getBtnDeleteModule() { return btnDeleteModule; }
-    public JButton getBtnCreateModule() { return btnCreateModule; }
-    public JButton getBtnAssignModuleToTeacher() { return btnAssignModuleToTeacher; }
-    public JButton getBtnRemoveTeacherFromModule() { return btnRemoveTeacherFromModule; }
-    public JButton getBtnRefresh() { return btnRefresh; }
-    public JButton getBtnSave() { return btnSave; }
+
 
     public void showModulesCard() {
         cardLayout.show(cardPanel, CARD_MODULES);
@@ -435,6 +431,31 @@ public class AdminMainFrame extends JFrame {
     public void addTeacherSelectionListener(ActionListener listener) {
         comboBoxTeachers.addActionListener(listener);
     }
+
+    public void addSelectedUnassignedModuleListener(ListSelectionListener listener) {
+        listUnassignedModules.getSelectionModel().addListSelectionListener(listener);
+    }
+
+    public void addSelectedAssignedModuleListener(ListSelectionListener listener) {
+        listAssignedModules.getSelectionModel().addListSelectionListener(listener);
+    }
+
+    public JList<Module> getListUnassignedModules() {return listUnassignedModules;}
+    public JList<Module> getListAssignedModules() {return listAssignedModules;}
+
+    // ========================================================================
+    // GETTERS BOTONES
+    // ========================================================================
+
+    public JButton getBtnLogout() { return btnLogout; }
+    public JButton getBtnManageModules() { return btnManageModules; }
+    public JButton getBtnAssignTeachers() { return btnAssignTeachers; }
+    public JButton getBtnDeleteModule() { return btnDeleteModule; }
+    public JButton getBtnCreateModule() { return btnCreateModule; }
+    public JButton getBtnAssignModuleToTeacher() { return btnAssignModuleToTeacher; }
+    public JButton getBtnRemoveTeacherFromModule() { return btnRemoveTeacherFromModule; }
+    public JButton getBtnRefresh() { return btnRefresh; }
+    public JButton getBtnSave() { return btnSave; }
 
     // ========================================================================
     // HELPERS DIALOG
