@@ -181,6 +181,7 @@ public class TeacherController implements ActionListener {
             return;
         }
         if (!isModuleOwnedByCurrentTeacher(selectedModule)) {
+            // Esto no pasa porque solo ve sus módulos, pero por si acaso...
             view.showError("Solo puede modificar las notas de tus alumnos.");
             return;
         }
@@ -196,7 +197,11 @@ public class TeacherController implements ActionListener {
         }
         Double grade;
         try {
-            grade = view.getGradeValueAtRow(selectedRow);
+            String gradeText = view.getGradeTextAtRow(selectedRow);
+            if (gradeText == null || gradeText.isBlank()) {
+                throw new NumberFormatException("Valor vacío");
+            }
+            grade = Double.valueOf(gradeText.replace(",", "."));
         } catch (NumberFormatException ex) {
             view.showError("La nota debe ser un número válido.");
             return;
