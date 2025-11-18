@@ -195,16 +195,15 @@ public class TeacherController implements ActionListener {
             view.showError("No se pudo identificar al alumno seleccionado.");
             return;
         }
-        Double grade;
-        try {
-            String gradeText = view.getGradeTextAtRow(selectedRow);
-            if (gradeText == null || gradeText.isBlank()) {
-                throw new NumberFormatException("Valor vacío");
+        Double grade = null;
+        String gradeText = view.getGradeTextAtRow(selectedRow);
+        if (gradeText != null && !gradeText.isBlank()) {
+            try {
+                grade = Double.valueOf(gradeText.replace(",", "."));
+            } catch (NumberFormatException ex) {
+                view.showError("La nota debe ser un número válido.");
+                return;
             }
-            grade = Double.valueOf(gradeText.replace(",", "."));
-        } catch (NumberFormatException ex) {
-            view.showError("La nota debe ser un número válido.");
-            return;
         }
         try {
             enrollmentService.updateGrade(studentId, selectedModule.getId(), grade);
