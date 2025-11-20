@@ -12,8 +12,6 @@ import com.primertrimestre.service.EnrollmentService;
 import com.primertrimestre.service.ModuleService;
 import com.primertrimestre.service.StudentService;
 import com.primertrimestre.service.TeacherService;
-import com.primertrimestre.ui.controllers.AdminController;
-import com.primertrimestre.ui.view.StudentMainFrame;
 import com.primertrimestre.ui.view.LoginWindow;
 
 public final class LoginController implements ActionListener{
