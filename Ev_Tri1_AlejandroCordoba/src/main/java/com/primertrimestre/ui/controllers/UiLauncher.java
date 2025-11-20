@@ -19,6 +19,7 @@ import com.primertrimestre.ui.view.LoginWindow;
 import com.primertrimestre.ui.view.RegistrationWindow;
 
 public final class UiLauncher {
+    
     public static void showLogin() {
         StudentDao studentDao = new StudentDaoJpa();
         TeacherDao teacherDao = new TeacherDaoJpa();
@@ -40,7 +41,7 @@ public final class UiLauncher {
 			        		administratorService, 
 			        		moduleService, 
 			        		enrollmentService, 
-			        		session);
+			        		session);// añadir aquí .showLoginWindow y que ahí tenga el view.setVisible(true)
         // El constructor se registra como listener del botón Enviar, por eso no guardamos la referencia de esta instancia. 
         view.setVisible(true);
     }
