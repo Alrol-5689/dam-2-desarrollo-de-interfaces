@@ -3,6 +3,7 @@ package com.primertrimestre.ui.controllers;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -21,13 +22,12 @@ import com.primertrimestre.ui.view.TeacherMainFrame;
 
 public class TeacherController implements ActionListener {
 	
-	private TeacherMainFrame view;
+    private TeacherMainFrame view;
 	private final SessionContext session;
 	private final ModuleService moduleService;
 	private final EnrollmentService enrollmentService;
-	
 
-	public TeacherController(SessionContext session, 
+    public TeacherController(SessionContext session, 
 							 ModuleService moduleService, 
 							 EnrollmentService enrollmentService) {
 		this.session = session;
@@ -43,7 +43,7 @@ public class TeacherController implements ActionListener {
 		String command = e.getActionCommand();
 		switch (command) {
 			case TeacherMainFrame.CMD_LOGOUT -> logout();
-			case TeacherMainFrame.CMD_SAVE -> saveNotes();
+			case TeacherMainFrame.CMD_SAVE -> saveAllNotes();
 			case TeacherMainFrame.CMD_REFRESH -> refresh();
 		}
 	}
@@ -174,7 +174,29 @@ public class TeacherController implements ActionListener {
         return current instanceof Teacher t ? t : null;
     }
 
-	private void saveNotes() { 
+	private String saveNote(Module selectedModule, int row) { 
+        Long studentId = view.getStudentIdAtRow(row);
+        if (studentId == null) {
+            return "Fila " + (row + 1) + ": no se pudo identificar al alumno.";
+        }
+        Double grade = null;
+        String gradeText = view.getGradeTextAtRow(row);
+        if (gradeText != null && !gradeText.isBlank()) {
+            try {
+                grade = Double.valueOf(gradeText.replace(",", "."));
+            } catch (NumberFormatException ex) {
+                return "Fila " + (row + 1) + ": la nota debe ser un número válido.";
+            }
+        }
+        try {
+            enrollmentService.updateGrade(studentId, selectedModule.getId(), grade);
+            return null;
+        } catch (Exception ex) {
+            return "Fila " + (row + 1) + ": " + ex.getMessage();
+        }
+	}
+
+    private void saveAllNotes() {
         Module selectedModule = view.getSelectionModule();
         if (selectedModule == null) {
             view.showInfo("Seleccione un módulo antes de guardar notas.");
@@ -185,34 +207,25 @@ public class TeacherController implements ActionListener {
             view.showError("Solo puede modificar las notas de tus alumnos.");
             return;
         }
-        int selectedRow = view.getSelectedStudentRow();
-        if (selectedRow < 0) {
-            view.showInfo("Seleccione un alumno para actualizar su nota.");
+        if(view.getStudentTableModel().getRowCount() == 0) {
+            view.showInfo("No hay alumnos para guardar notas.");
             return;
         }
-        Long studentId = view.getStudentIdAtRow(selectedRow);
-        if (studentId == null) {
-            view.showError("No se pudo identificar al alumno seleccionado.");
-            return;
-        }
-        Double grade = null;
-        String gradeText = view.getGradeTextAtRow(selectedRow);
-        if (gradeText != null && !gradeText.isBlank()) {
-            try {
-                grade = Double.valueOf(gradeText.replace(",", "."));
-            } catch (NumberFormatException ex) {
-                view.showError("La nota debe ser un número válido.");
-                return;
+        List<String> errors = new ArrayList<>();
+        for(int row = 0; row < view.getStudentTableModel().getRowCount(); row++) {
+            String error = saveNote(selectedModule, row);
+            if (error != null) {
+                errors.add(error);
             }
         }
-        try {
-            enrollmentService.updateGrade(studentId, selectedModule.getId(), grade);
-            view.showInfo("Nota guardada correctamente.");
-            loadStudentsForSelectedModule();
-        } catch (Exception ex) {
-            view.showError(ex.getMessage());
-        }
-	}
+        if(errors.isEmpty()) {
+            view.showInfo("Todas las notas se han guardado correctamente.");
+        } else {
+            // Mostrar todos los errores juntos con saltos de línea .join("\n", errors)
+            view.showError("Hubo errores al guardar:\n" + String.join("\n", errors));
+        }   
+        loadStudentsForSelectedModule();
+    }
 
     private void logout() {
         session.clear();

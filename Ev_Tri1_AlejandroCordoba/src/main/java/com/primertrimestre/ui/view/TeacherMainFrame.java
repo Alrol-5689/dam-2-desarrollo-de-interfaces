@@ -63,7 +63,8 @@ public class TeacherMainFrame extends JFrame { // No implemento ActionListener p
             public boolean isCellEditable(int row, int column) {return column == 3; }
             // Sólo la columna de nota se puede editar
 	    };
-	private JTable studentsTable;
+
+    private JTable studentsTable;
 	private final String[] studentRow = new String[4]; 
     /*
      * moduleListModel: modelo de la lista de módulos
@@ -268,6 +269,11 @@ public class TeacherMainFrame extends JFrame { // No implemento ActionListener p
         return Double.valueOf(text);
     }
 
+    public String getGradeTextAtRow(int rowIndex) {
+        Object value = studentTableModel.getValueAt(rowIndex, 3);
+        return value != null ? value.toString().trim() : "";
+    }
+
     //==>> GETTERS AND SETTERS <<==//
 
     public JButton getBtnLogout() {return btnLogout;}
@@ -281,6 +287,8 @@ public class TeacherMainFrame extends JFrame { // No implemento ActionListener p
             this.lblTeacherName.setText(resolveTeacherDisplayName(teacher));
         }
     }
+
+    public DefaultTableModel getStudentTableModel() {return studentTableModel;}
 
     // ========================================================================
     // HELPERS DIALOG
