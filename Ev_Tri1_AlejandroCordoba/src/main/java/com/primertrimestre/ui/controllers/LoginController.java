@@ -8,8 +8,6 @@ import com.primertrimestre.model.Administrator;
 import com.primertrimestre.model.Student;
 import com.primertrimestre.model.Teacher;
 import com.primertrimestre.service.AdministratorService;
-import com.primertrimestre.service.EnrollmentService;
-import com.primertrimestre.service.ModuleService;
 import com.primertrimestre.service.StudentService;
 import com.primertrimestre.service.TeacherService;
 import com.primertrimestre.ui.view.LoginWindow;
@@ -21,24 +19,26 @@ public final class LoginController implements ActionListener{
     private final StudentService studentService;
     private final TeacherService teacherService;
     private final AdministratorService administratorService;
-    private final ModuleService moduleService;
-    private final EnrollmentService enrollmentService;
+    private final LoginNavigator navigator;
 
     public LoginController(LoginWindow view, StudentService studentService, 
     					   TeacherService teacherService, AdministratorService administratorService,
-    					   ModuleService moduleService, EnrollmentService enrollmentService, SessionContext session) {
+                           SessionContext session,
+                           LoginNavigator navigator) {
         this.view = view;
         this.studentService = studentService;
         this.teacherService = teacherService;
         this.administratorService = administratorService;
-        this.moduleService = moduleService;
-        this.enrollmentService = enrollmentService;
         this.session = session;
+        this.navigator = navigator;
+    }
+    
+    public void showLoginFrame() {
         view.getBtnLogin().addActionListener(this);
         view.getBtnSingUp().addActionListener(this);
         view.getBtnClear().addActionListener(this);
+        view.setVisible(true);
     }
-
     @Override
     public void actionPerformed(ActionEvent e) {	
     	String command = e.getActionCommand(); // Objet obj = e.getSource(); me gusta menos. 
@@ -78,8 +78,7 @@ public final class LoginController implements ActionListener{
         if (administrator != null) {
             session.setCurrentUser(administrator);
             view.dispose();
-            new AdminController(session, teacherService, moduleService, enrollmentService)
-                .showAdminMainFrame();
+            navigator.onAdminLogin();
         } else {
             view.showError("Credenciales incorrectas.");
             view.clearForm();
@@ -91,8 +90,7 @@ public final class LoginController implements ActionListener{
         if (teacher != null) {
             session.setCurrentUser(teacher);
             view.dispose();
-            new TeacherController(session, moduleService, enrollmentService)
-                .showTeacherMainFrame(); 
+            navigator.onTeacherLogin();
         } else {
             view.showError("Credenciales incorrectas.");
             view.clearForm();
@@ -104,8 +102,7 @@ public final class LoginController implements ActionListener{
         if (student != null) {
             session.setCurrentUser(student);
             view.dispose();
-            new StudentController(session, studentService, enrollmentService, moduleService)
-                .showStudentMainFrame();
+            navigator.onStudentLogin();
         } else {
             view.showError("Credenciales incorrectas.");
             view.clearForm();
@@ -118,4 +115,10 @@ public final class LoginController implements ActionListener{
         UiLauncher.showRegistration();
     }
 
+    // Callback de navegación: el controller no decide la vista siguiente, solo avisa según el rol
+    public interface LoginNavigator {
+        void onStudentLogin();
+        void onTeacherLogin();
+        void onAdminLogin();
+    }
 }
