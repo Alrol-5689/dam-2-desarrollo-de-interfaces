@@ -17,25 +17,26 @@ import com.primertrimestre.ui.view.RegistrationWindow;
 
 public final class RegistrationController implements ActionListener {
 
-    private final RegistrationWindow view;
+    private RegistrationWindow view;
     private final StudentService studentService;
     private final TeacherService teacherService;
     private final AdministratorService administratorService;
     private final Runnable returnToLogin;
 
-    public RegistrationController(RegistrationWindow view,
-                                  StudentService studentService,
+    public RegistrationController(StudentService studentService,
                                   TeacherService teacherService,
                                   AdministratorService administratorService,
                                   Runnable returnToLogin) {
-        this.view = view;
         this.studentService = studentService;
         this.teacherService = teacherService;
         this.administratorService = administratorService;
         this.returnToLogin = returnToLogin != null ? returnToLogin : () -> {};
+        // Si no nos pasan callback de navegación, usamos uno vacío para evitar NPE
+        // () -> {} = new Runnable() { public void run() {}
     }
 
     public void showRegistrationFrame() {
+        view = new RegistrationWindow();
         view.getBtnRegister().addActionListener(this);
         view.getBtnCancel().addActionListener(this);
         view.addWindowListener(new WindowAdapter() {

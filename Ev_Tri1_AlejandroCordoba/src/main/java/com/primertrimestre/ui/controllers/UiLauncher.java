@@ -38,13 +38,11 @@ public final class UiLauncher {
     }
 
     public static void showRegistration() {
-        RegistrationWindow view = new RegistrationWindow();
         new RegistrationController(
-                view,
                 APP.getStudentService(),
                 APP.getTeacherService(),
                 APP.getAdministratorService(),
-                UiLauncher::showLogin
+                UiLauncher::showLogin // Runnable returnToLogin del controller hace callback a este método
         ).showRegistrationFrame();
     }
 
