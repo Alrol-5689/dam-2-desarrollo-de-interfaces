@@ -10,6 +10,10 @@ import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import javax.swing.JButton;
 
+import java.awt.Dimension;
+
+import javax.swing.ImageIcon;
+
 public class LoginWindow extends JFrame {
 
 	private static final long serialVersionUID = 1L;
@@ -28,10 +32,12 @@ public class LoginWindow extends JFrame {
 	private JComboBox<String> userType;
 
 	public LoginWindow() {
+		setResizable(false);
 		
 		setTitle("Ventana de inicio");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setMinimumSize(new Dimension(612, 392));
+		setBounds(100, 100, 612, 392);
 		setLocationRelativeTo(null); // centrar 
 		
 		contentPane = new JPanel();
@@ -40,7 +46,7 @@ public class LoginWindow extends JFrame {
 		contentPane.setLayout(null);
 		
 		JLabel lblUser = new JLabel("Usuario: ");
-		lblUser.setBounds(45, 67, 61, 16);
+		lblUser.setBounds(45, 66, 61, 16);
 		contentPane.add(lblUser);
 		
 		JLabel lblPass = new JLabel("Contraseña: ");
@@ -70,18 +76,23 @@ public class LoginWindow extends JFrame {
 		
 		btnClear = new JButton("Limpiar");
 		btnClear.setActionCommand(CMD_CLEAR);
-		btnClear.setBounds(45, 219, 111, 29);
+		btnClear.setBounds(108, 305, 111, 29);
 		contentPane.add(btnClear);
 		
 		btnLogin = new JButton("Enviar");
 		btnLogin.setActionCommand(CMD_LOGIN);
-		btnLogin.setBounds(166, 219, 117, 29);
+		btnLogin.setBounds(259, 305, 117, 29);
 		contentPane.add(btnLogin);
 		
 		btnSingUp = new JButton("Inscribirse");
         btnSingUp.setActionCommand(CMD_SINGUP);
-        btnSingUp.setBounds(295, 219, 112, 29);
+        btnSingUp.setBounds(413, 305, 112, 29);
         contentPane.add(btnSingUp);
+        
+        JLabel lblNewLabel = new JLabel("New label");
+        lblNewLabel.setIcon(new ImageIcon(LoginWindow.class.getResource("/img/256x256bb.jpg")));
+        lblNewLabel.setBounds(324, 24, 258, 256);
+        contentPane.add(lblNewLabel);
 
 	}
 
@@ -112,5 +123,4 @@ public class LoginWindow extends JFrame {
 	public void showError(String message) {
 		JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
 	}
-
 }
