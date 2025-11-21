@@ -4,58 +4,33 @@ import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.Objects;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-
-import com.primertrimestre.model.Administrator;
-import com.primertrimestre.model.Student;
-import com.primertrimestre.model.Teacher;
-import com.primertrimestre.service.AdministratorService;
-import com.primertrimestre.service.StudentService;
-import com.primertrimestre.service.TeacherService;
+import javax.swing.JOptionPane;
 
 public class RegistrationWindow extends JFrame {
 
     private static final long serialVersionUID = 1L;
-
-    private final StudentService studentService;
-    private final TeacherService teacherService;
-    private final AdministratorService administratorService;
-    private final Runnable returnToLogin;
+    public static final String CMD_REGISTER = "REGISTER";
+    public static final String CMD_CANCEL = "CANCEL";
 
     private final JComboBox<String> roleCombo = new JComboBox<>(new String[] { "Alumno", "Profesor", "Administrador" });
     private final JTextField usernameField = new JTextField(20);
     private final JTextField fullNameField = new JTextField(20);
     private final JPasswordField passwordField = new JPasswordField(20);
     private final JPasswordField confirmPasswordField = new JPasswordField(20);
+    private JButton registerButton;
+    private JButton cancelButton;
 
-    public RegistrationWindow(StudentService studentService,
-                              TeacherService teacherService,
-                              AdministratorService administratorService,
-                              Runnable returnToLogin) {
-        this.studentService = Objects.requireNonNull(studentService, "studentService");
-        this.teacherService = Objects.requireNonNull(teacherService, "teacherService");
-        this.administratorService = Objects.requireNonNull(administratorService, "administratorService");
-        this.returnToLogin = returnToLogin != null ? returnToLogin : () -> {};
+    public RegistrationWindow() {
         setTitle("Registro de usuario");
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                cancel();
-            }
-        });
         initComponents();
         pack();
         setLocationRelativeTo(null);
@@ -110,73 +85,49 @@ public class RegistrationWindow extends JFrame {
         content.add(form, BorderLayout.CENTER);
 
         JPanel buttons = new JPanel();
-        JButton registerButton = new JButton("Registrar");
-        registerButton.addActionListener(e -> register());
-        JButton cancelButton = new JButton("Cancelar");
-        cancelButton.addActionListener(e -> cancel());
+        registerButton = new JButton("Registrar");
+        registerButton.setActionCommand(CMD_REGISTER);
+        cancelButton = new JButton("Cancelar");
+        cancelButton.setActionCommand(CMD_CANCEL);
         buttons.add(registerButton);
         buttons.add(cancelButton);
 
         content.add(buttons, BorderLayout.SOUTH);
     }
 
-    private void register() {
-        String username = usernameField.getText().trim();
-        String fullName = fullNameField.getText().trim();
-        String password = new String(passwordField.getPassword());
-        String confirmPassword = new String(confirmPasswordField.getPassword());
-        String role = (String) roleCombo.getSelectedItem();
+    public JButton getBtnRegister() { return registerButton; }
+    public JButton getBtnCancel() { return cancelButton; }
 
-        if (username.isEmpty() || fullName.isEmpty() || password.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        if (!password.equals(confirmPassword)) {
-            JOptionPane.showMessageDialog(this, "Las contraseñas no coinciden.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+    public String getUsername() { return usernameField.getText().trim(); }
+    public String getFullName() { return fullNameField.getText().trim(); }
+    public String getPassword() { return new String(passwordField.getPassword()); }
+    public String getConfirmPassword() { return new String(confirmPasswordField.getPassword()); }
+    public String getSelectedRole() { return (String) roleCombo.getSelectedItem(); }
 
-        try {
-            if ("Profesor".equalsIgnoreCase(role)) {
-                Teacher teacher = new Teacher();
-                teacher.setUsername(username);
-                teacher.setFullName(fullName);
-                teacher.setPassword(password);
-                teacherService.registerTeacher(teacher);
-            } else if ("Administrador".equalsIgnoreCase(role)) {
-                Administrator administrator = new Administrator();
-                administrator.setUsername(username);
-                administrator.setFullName(fullName);
-                administrator.setPassword(password);
-                administratorService.registerAdministrator(administrator);
-            } else {
-                Student student = new Student();
-                student.setUsername(username);
-                student.setFullName(fullName);
-                student.setPassword(password);
-                studentService.registerStudent(student);
-            }
-            JOptionPane.showMessageDialog(this, "Registro completado. Ahora puede iniciar sesión.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-            closeAndReturn();
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
+    public void clearForm() {
+        usernameField.setText("");
+        fullNameField.setText("");
+        passwordField.setText("");
+        confirmPasswordField.setText("");
+        roleCombo.setSelectedIndex(0);
+        usernameField.requestFocus();
     }
 
-    private void cancel() {
+    public boolean confirmCancel() {
         int option = JOptionPane.showConfirmDialog(
                 this,
                 "¿Cancelar el registro y volver al inicio de sesión?",
                 "Cancelar registro",
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE);
-        if (option == JOptionPane.YES_OPTION) {
-            closeAndReturn();
-        }
+        return option == JOptionPane.YES_OPTION;
     }
 
-    private void closeAndReturn() {
-        dispose();
-        SwingUtilities.invokeLater(returnToLogin);
+    public void showError(String message) {
+        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    public void showInfo(String message) {
+        JOptionPane.showMessageDialog(this, message, "Información", JOptionPane.INFORMATION_MESSAGE);
     }
 }
