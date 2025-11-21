@@ -47,8 +47,10 @@ public class StudentController implements ActionListener {
     }
 
     public void showStudentMainFrame() {
+
         Student currentStudent = (Student) session.getCurrentUser();
         view = new StudentMainFrame(currentStudent);
+        
         view.getBtnLogout().addActionListener(this);
         view.getBtnEnrollInModule().addActionListener(this);
         view.getBtnEnrollInModule().setEnabled(false);

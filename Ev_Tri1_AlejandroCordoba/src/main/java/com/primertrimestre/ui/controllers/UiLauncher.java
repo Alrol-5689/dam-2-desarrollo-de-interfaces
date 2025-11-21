@@ -1,82 +1,77 @@
 package com.primertrimestre.ui.controllers;
 
-import com.primertrimestre.auth.SessionContext;
-import com.primertrimestre.persistence.dao.StudentDao;
-import com.primertrimestre.persistence.dao.TeacherDao;
-import com.primertrimestre.persistence.dao.ModuleDao;
-import com.primertrimestre.persistence.dao.EnrollmentDao;
-import com.primertrimestre.persistence.jpa.AdministratorDaoJpa;
-import com.primertrimestre.persistence.jpa.EnrollmentDaoJpa;
-import com.primertrimestre.persistence.jpa.ModuleDaoJpa;
-import com.primertrimestre.persistence.jpa.StudentDaoJpa;
-import com.primertrimestre.persistence.jpa.TeacherDaoJpa;
-import com.primertrimestre.service.AdministratorService;
-import com.primertrimestre.service.EnrollmentService;
-import com.primertrimestre.service.ModuleService;
-import com.primertrimestre.service.StudentService;
-import com.primertrimestre.service.TeacherService;
 import com.primertrimestre.ui.view.LoginWindow;
 import com.primertrimestre.ui.view.RegistrationWindow;
 
 public final class UiLauncher {
+
+    private static final AppContext APP = AppContext.getInstance(); // singleton: se crea una única vez al cargar la clase
     
     public static void showLogin() {
-        StudentDao studentDao = new StudentDaoJpa();
-        TeacherDao teacherDao = new TeacherDaoJpa();
-        ModuleDao moduleDao = new ModuleDaoJpa();
-        EnrollmentDao enrollmentDao = new EnrollmentDaoJpa();
-
-        StudentService studentService = new StudentService(studentDao);
-        TeacherService teacherService = new TeacherService(teacherDao);
-        ModuleService moduleService = new ModuleService(moduleDao, teacherDao);
-        EnrollmentService enrollmentService = new EnrollmentService(enrollmentDao, studentDao, moduleDao);
-        AdministratorService administratorService = new AdministratorService(new AdministratorDaoJpa());
-        SessionContext session = new SessionContext();
-        
         LoginWindow view = new LoginWindow();
-        
-        new LoginController(view, 
-			        		studentService, 
-			        		teacherService, 
-			        		administratorService, 
-			        		moduleService, 
-			        		enrollmentService, 
-			        		session);// añadir aquí .showLoginWindow y que ahí tenga el view.setVisible(true)
-        // El constructor se registra como listener del botón Enviar, por eso no guardamos la referencia de esta instancia. 
-        view.setVisible(true);
-    }
-    
-    public static void showLogin_2() { //==>> NO RECOMENTADO crear tandos DAOs... mejor la versión larga de arriba 
+        new LoginController(
+                view,
+                APP.getStudentService(),
+                APP.getTeacherService(),
+                APP.getAdministratorService(),
+                APP.getSession(),
 
-        LoginWindow view = new LoginWindow();
-        
-        new LoginController(view, 
-			        	    new StudentService(new StudentDaoJpa()),
-			        	    new TeacherService(new TeacherDaoJpa()),
-			        	    new AdministratorService(new AdministratorDaoJpa()),
-			        	    new ModuleService(new ModuleDaoJpa(), new TeacherDaoJpa()),
-			        	    new EnrollmentService(new EnrollmentDaoJpa(), new StudentDaoJpa(), new ModuleDaoJpa()),
-			        	    new SessionContext());
-        // El constructor se registra como listener del botón Enviar, por eso no guardamos la referencia de esta instancia. 
-        view.setVisible(true);
+                // Le pasamos una clase anónima que implementa los contratos de la interfaz que está dentro del controller
+                // implementación del callback de navegación
+                new LoginController.LoginNavigator() { 
+                    @Override
+                    public void onStudentLogin() {
+                        UiLauncher.showStudent();
+                    }
+
+                    @Override
+                    public void onTeacherLogin() {
+                        UiLauncher.showTeacher();
+                    }
+
+                    @Override
+                    public void onAdminLogin() {
+                        UiLauncher.showAdmin();
+                    }
+                }
+        ).showLoginFrame(); 
     }
 
     public static void showRegistration() {
-        StudentDaoJpa studentDao = new StudentDaoJpa();
-        TeacherDaoJpa teacherDao = new TeacherDaoJpa();
-        AdministratorDaoJpa administratorDao = new AdministratorDaoJpa();
+        RegistrationWindow view = new RegistrationWindow();
+        new RegistrationController(
+                view,
+                APP.getStudentService(),
+                APP.getTeacherService(),
+                APP.getAdministratorService(),
+                UiLauncher::showLogin
+        ).showRegistrationFrame();
+    }
 
-        StudentService studentService = new StudentService(studentDao);
-        TeacherService teacherService = new TeacherService(teacherDao);
-        AdministratorService administratorService = new AdministratorService(administratorDao);
+    public static void showStudent() {
+        new StudentController(
+                APP.getSession(),
+                APP.getStudentService(),
+                APP.getEnrollmentService(),
+                APP.getModuleService()
+        ).showStudentMainFrame();
+    }
 
-        RegistrationWindow registrationWindow = new RegistrationWindow(
-                studentService,
-                teacherService,
-                administratorService,
-                UiLauncher::showLogin // Es lo mismo que escribir ' showLogin(); '
-        );
-        registrationWindow.setVisible(true);
+    public static void showTeacher() {
+        new TeacherController(
+                APP.getSession(),
+                APP.getModuleService(),
+                APP.getEnrollmentService()
+        ).showTeacherMainFrame();
+    }
+
+    public static void showAdmin() {
+        new AdminController(
+                APP.getSession(),
+                APP.getTeacherService(),
+                APP.getModuleService(),
+                APP.getEnrollmentService()
+        ).showAdminMainFrame();
     }
     
 }
