@@ -2,6 +2,8 @@ package com.primertrimestre.ui.controllers;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.List;
 
 import javax.swing.SwingUtilities;
@@ -100,6 +102,16 @@ public class StudentController implements ActionListener {
         //             }
         //         }
         //     );
+        
+        // JFrame -> java.awt.Window.addWindowListener
+        view.addWindowListener(
+        	new WindowAdapter() {
+	            @Override
+	            public void windowClosing(WindowEvent e) {
+	                handleFinishApp();
+	            }
+        	}
+        );
         refresh();
         view.setVisible(true);
     }
@@ -201,5 +213,11 @@ public class StudentController implements ActionListener {
         session.clear();
         view.dispose();
         SwingUtilities.invokeLater(UiLauncher::showLogin);
+    }
+
+    private void handleFinishApp() {
+        if (view.finishApp()) {
+            System.exit(0);
+        }
     }
 }

@@ -86,7 +86,7 @@ public class TeacherMainFrame extends JFrame { // No implemento ActionListener p
     	
     	setTitle("Ventana de profesores - " 
             + (teacher.getFullName() != null ? teacher.getFullName() : teacher.getUsername()));
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		setMinimumSize(new Dimension(850, 500));
 		setBounds(100, 100, 1000, 581);
 		
@@ -293,7 +293,19 @@ public class TeacherMainFrame extends JFrame { // No implemento ActionListener p
     // ========================================================================
     // HELPERS DIALOG
     // ========================================================================
-    
+
+    public boolean finishApp() {
+        // showConfirmDialog: bloquea hasta que el usuario responde, muestra un modal con botones predefinidos
+        int option = JOptionPane.showConfirmDialog(
+                this, // componente padre para centrar el diálogo
+                "¿Deseas cerrar la aplicación?", // mensaje a mostrar
+                "Cancelar registro", // título de la ventana del diálogo
+                JOptionPane.YES_NO_OPTION, // botones Sí y No
+                JOptionPane.QUESTION_MESSAGE); // icono de pregunta
+        // Devuelve true solo si el usuario pulsa Sí; en otro caso false
+        return option == JOptionPane.YES_OPTION;
+    }
+
     public void showInfo(String message) {
         JOptionPane.showMessageDialog(this, message, "Información", JOptionPane.INFORMATION_MESSAGE);
     }

@@ -2,7 +2,8 @@ package com.primertrimestre.ui.controllers;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -105,6 +106,16 @@ public class TeacherController implements ActionListener {
                  getValueIsAdjusting() -> true si el usuario todavía está arrastrando el ratón */
         
         //==================================================================================
+        
+        // JFrame -> java.awt.Window.addWindowListener
+        view.addWindowListener(
+        	new WindowAdapter() {
+	            @Override
+	            public void windowClosing(WindowEvent e) {
+	                handleFinishApp();
+	            }
+        	}
+        );
 
         refreshModules(); 
         view.setVisible(true);
@@ -232,6 +243,12 @@ public class TeacherController implements ActionListener {
         view.dispose();
         SwingUtilities.invokeLater(UiLauncher::showLogin); 
         // qué es SwingUtilities y por qué no simplemente UiLauncher.showLogin()?
+    }
+
+    private void handleFinishApp() {
+        if (view.finishApp()) {
+            System.exit(0);
+        }
     }
 
     private Teacher resolveCurrentTeacher() {

@@ -35,7 +35,7 @@ public class LoginWindow extends JFrame {
 		setResizable(false);
 		
 		setTitle("Ventana de inicio");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		setMinimumSize(new Dimension(612, 392));
 		setBounds(100, 100, 612, 392);
 		setLocationRelativeTo(null); // centrar 
@@ -119,6 +119,18 @@ public class LoginWindow extends JFrame {
 		Object selected = userType.getSelectedItem();
 		return selected != null ? selected.toString() : null;
 	}
+
+    public boolean finishApp() {
+        // showConfirmDialog: bloquea hasta que el usuario responde, muestra un modal con botones predefinidos
+        int option = JOptionPane.showConfirmDialog(
+                this, // componente padre para centrar el diálogo
+                "¿Deseas cerrar la aplicación?", // mensaje a mostrar
+                "Cancelar registro", // título de la ventana del diálogo
+                JOptionPane.YES_NO_OPTION, // botones Sí y No
+                JOptionPane.QUESTION_MESSAGE); // icono de pregunta
+        // Devuelve true solo si el usuario pulsa Sí; en otro caso false
+        return option == JOptionPane.YES_OPTION;
+    }
 
 	public void showError(String message) {
 		JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);

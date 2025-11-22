@@ -2,6 +2,8 @@ package com.primertrimestre.ui.controllers;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import com.primertrimestre.auth.SessionContext;
 import com.primertrimestre.model.Administrator;
@@ -37,6 +39,15 @@ public final class LoginController implements ActionListener{
         view.getBtnLogin().addActionListener(this);
         view.getBtnSingUp().addActionListener(this);
         view.getBtnClear().addActionListener(this);
+        // JFrame -> java.awt.Window.addWindowListener
+        view.addWindowListener(
+        	new WindowAdapter() {
+	            @Override
+	            public void windowClosing(WindowEvent e) {
+	                handleFinishApp();
+	            }
+        	}
+        );
         view.setVisible(true);
     }
     @Override
@@ -120,5 +131,11 @@ public final class LoginController implements ActionListener{
         void onStudentLogin();
         void onTeacherLogin();
         void onAdminLogin();
+    }
+
+    private void handleFinishApp() {
+        if (view.finishApp()) {
+            System.exit(0);
+        }
     }
 }
