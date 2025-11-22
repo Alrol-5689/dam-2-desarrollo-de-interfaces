@@ -1,9 +1,7 @@
 package com.primertrimestre.ui.view;
 
 import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.GridLayout;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -32,8 +30,8 @@ public class RegistrationWindow extends JFrame {
         setTitle("Registro de usuario");
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         initComponents();
-        pack();
-        setLocationRelativeTo(null);
+        pack(); //  hace que el JFrame calcule su tamaño mínimo adecuado según el layout 
+        setLocationRelativeTo(null); // null --> En el centor del monitor principal
     }
 
     private void initComponents() {
@@ -41,46 +39,21 @@ public class RegistrationWindow extends JFrame {
         content.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
         setContentPane(content);
 
-        JPanel form = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        JPanel form = new JPanel(new GridLayout(0, 2, 10, 10));
+        form.add(new JLabel("Rol:"));
+        form.add(roleCombo);
 
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        form.add(new JLabel("Rol:"), gbc);
+        form.add(new JLabel("Usuario:"));
+        form.add(usernameField);
 
-        gbc.gridx = 1;
-        form.add(roleCombo, gbc);
+        form.add(new JLabel("Nombre completo:"));
+        form.add(fullNameField);
 
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        form.add(new JLabel("Usuario:"), gbc);
+        form.add(new JLabel("Contraseña:"));
+        form.add(passwordField);
 
-        gbc.gridx = 1;
-        form.add(usernameField, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        form.add(new JLabel("Nombre completo:"), gbc);
-
-        gbc.gridx = 1;
-        form.add(fullNameField, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        form.add(new JLabel("Contraseña:"), gbc);
-
-        gbc.gridx = 1;
-        form.add(passwordField, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 4;
-        form.add(new JLabel("Repetir contraseña:"), gbc);
-
-        gbc.gridx = 1;
-        form.add(confirmPasswordField, gbc);
+        form.add(new JLabel("Repetir contraseña:"));
+        form.add(confirmPasswordField);
 
         content.add(form, BorderLayout.CENTER);
 
@@ -114,12 +87,14 @@ public class RegistrationWindow extends JFrame {
     }
 
     public boolean confirmCancel() {
+        // showConfirmDialog: bloquea hasta que el usuario responde, muestra un modal con botones predefinidos
         int option = JOptionPane.showConfirmDialog(
-                this,
-                "¿Cancelar el registro y volver al inicio de sesión?",
-                "Cancelar registro",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE);
+                this, // componente padre para centrar el diálogo
+                "¿Cancelar el registro y volver al inicio de sesión?", // mensaje a mostrar
+                "Cancelar registro", // título de la ventana del diálogo
+                JOptionPane.YES_NO_OPTION, // botones Sí y No
+                JOptionPane.QUESTION_MESSAGE); // icono de pregunta
+        // Devuelve true solo si el usuario pulsa Sí; en otro caso false
         return option == JOptionPane.YES_OPTION;
     }
 
