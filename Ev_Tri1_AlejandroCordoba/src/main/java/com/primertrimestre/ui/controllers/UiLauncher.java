@@ -1,7 +1,6 @@
 package com.primertrimestre.ui.controllers;
 
 import com.primertrimestre.ui.view.LoginWindow;
-import com.primertrimestre.ui.view.RegistrationWindow;
 
 public final class UiLauncher {
 
