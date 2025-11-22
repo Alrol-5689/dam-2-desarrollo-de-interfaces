@@ -39,12 +39,15 @@ public final class RegistrationController implements ActionListener {
         view = new RegistrationWindow();
         view.getBtnRegister().addActionListener(this);
         view.getBtnCancel().addActionListener(this);
-        view.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                handleCancel();
-            }
-        });
+        // JFrame -> java.awt.Window.addWindowListener
+        view.addWindowListener(
+        	new WindowAdapter() {
+	            @Override
+	            public void windowClosing(WindowEvent e) {
+	                handleCancel();
+	            }
+        	}
+        );
         view.setVisible(true);
     }
 
@@ -122,5 +125,26 @@ public final class RegistrationController implements ActionListener {
     private void closeAndReturn() {
         view.dispose();
         SwingUtilities.invokeLater(returnToLogin);
+        /*
+        - SwingUtilities -> clase utilitaria para operaciones con Swing en el hilo de despacho de eventos (EDT)
+            EDT -> Event Dispatch Thread, hilo donde se ejecutan eventos y actualizaciones de la UI en Swing
+        - invokeLater(Runnable) -> método estático que recibe un Runnable y lo ejecuta en el EDT lo más pronto posible
+        - returnToLogin -> UiLauncher::showLogin
+
+        returnToLogin = () -> UiLauncher.showLogin();
+
+        returnToLogin = () -> {
+            UiLauncher.showLogin();
+        };
+        
+        returnToLogin = new Runnable() {
+            @Override
+            public void run() {
+                UiLauncher.showLogin();
+            }
+        };
+
+        */
+
     }
 }

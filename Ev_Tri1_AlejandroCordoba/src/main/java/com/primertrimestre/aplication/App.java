@@ -36,5 +36,18 @@ public class App {
 	            }
         	}
         );
+        /*VERSIONES LAMBDA CON Y SIN TRY-CATCH
+         
+         EventQueue.invokeLater(() -> {
+    		try {
+        		UiLauncher.showLogin();
+    		} catch (Exception e) {
+        		e.printStackTrace();
+    		}
+		});
+       
+        EventQueue.invokeLater( () -> UiLauncher.showLogin() ); 
+        
+        */
 	}
 }
