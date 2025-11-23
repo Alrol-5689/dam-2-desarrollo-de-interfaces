@@ -126,7 +126,8 @@ public final class LoginController implements ActionListener{
         UiLauncher.showRegistration();
     }
 
-    // Callback de navegación: el controller no decide la vista siguiente, solo avisa según el rol
+    // Interfaz anidada: expone callbacks para que otro componente decida a qué pantalla navegar.
+    // LoginController solo notifica el rol autenticado y delega la navegación al implementador.
     public interface LoginNavigator {
         void onStudentLogin();
         void onTeacherLogin();

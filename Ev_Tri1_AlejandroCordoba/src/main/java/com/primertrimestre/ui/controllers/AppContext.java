@@ -20,6 +20,8 @@ import com.primertrimestre.service.TeacherService;
 /**
  * Centraliza las dependencias compartidas (DAOs, servicios y sesión) para
  * reutilizarlas entre controladores sin recrearlas en cada cambio de pantalla.
+ * Es un singleton con constructor privado: nadie puede instanciarlo desde fuera,
+ * se usa la única instancia creada al cargar la clase vía getInstance().
  */
 public final class AppContext {
 
@@ -42,6 +44,7 @@ public final class AppContext {
     private final AdministratorService administratorService =
             new AdministratorService(administratorDao);
 
+    // Constructor privado: bloquea new AppContext() fuera de esta clase y garantiza un único punto de acceso.
     private AppContext() {
     }
 
