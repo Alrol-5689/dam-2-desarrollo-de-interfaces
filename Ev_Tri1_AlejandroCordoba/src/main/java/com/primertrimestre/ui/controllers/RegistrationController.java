@@ -35,8 +35,22 @@ public final class RegistrationController implements ActionListener {
         // () -> {} = new Runnable() { public void run() {}
     }
 
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        String command = e.getActionCommand();
+        switch (command) {
+            case RegistrationWindow.CMD_REGISTER -> handleRegister();
+            case RegistrationWindow.CMD_CANCEL -> handleCancel();
+        }
+    }
+
     public void showRegistrationFrame() {
         view = new RegistrationWindow();
+        registerListeners();
+        view.setVisible(true);
+    }
+
+    private void registerListeners() {
         view.getBtnRegister().addActionListener(this);
         view.getBtnCancel().addActionListener(this);
         // JFrame -> java.awt.Window.addWindowListener
@@ -48,16 +62,6 @@ public final class RegistrationController implements ActionListener {
 	            }
         	}
         );
-        view.setVisible(true);
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        String command = e.getActionCommand();
-        switch (command) {
-            case RegistrationWindow.CMD_REGISTER -> handleRegister();
-            case RegistrationWindow.CMD_CANCEL -> handleCancel();
-        }
     }
 
     private void handleRegister() {

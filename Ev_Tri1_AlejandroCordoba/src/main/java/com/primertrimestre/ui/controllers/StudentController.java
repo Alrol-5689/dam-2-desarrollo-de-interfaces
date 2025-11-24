@@ -49,10 +49,14 @@ public class StudentController implements ActionListener {
     }
 
     public void showStudentMainFrame() {
-
         Student currentStudent = (Student) session.getCurrentUser();
         view = new StudentMainFrame(currentStudent);
-        
+        registerListeners();
+        refresh();
+        view.setVisible(true);
+    }
+
+    public void registerListeners() {
         view.getBtnLogout().addActionListener(this);
         view.getBtnEnrollInModule().addActionListener(this);
         view.getBtnEnrollInModule().setEnabled(false);
@@ -112,8 +116,6 @@ public class StudentController implements ActionListener {
 	            }
         	}
         );
-        refresh();
-        view.setVisible(true);
     }
 
     private void save() {

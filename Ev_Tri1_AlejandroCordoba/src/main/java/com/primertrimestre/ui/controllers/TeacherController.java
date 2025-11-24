@@ -52,6 +52,12 @@ public class TeacherController implements ActionListener {
 	public void showTeacherMainFrame() {
         Teacher currentTeacher = resolveCurrentTeacher();
         view = new TeacherMainFrame(currentTeacher);
+        registerListeners();
+        refreshModules(); 
+        view.setVisible(true);
+	}
+
+    private void registerListeners() {
         view.getBtnLogout().addActionListener(this);    // Botón superior de cerrar sesión
         view.getBtnRefresh().addActionListener(this);   // Botón inferior de refrescar datos
         view.getBtnSaveNotes().addActionListener(this); // Botón inferior para guardar la nota editada    
@@ -116,10 +122,7 @@ public class TeacherController implements ActionListener {
 	            }
         	}
         );
-
-        refreshModules(); 
-        view.setVisible(true);
-	}
+    }
 
     private void onModuleSelected(ListSelectionEvent event) {
         if (event.getValueIsAdjusting()) { // Ignorar eventos intermedios mientras el usuario todavía está arrastrando/clickando

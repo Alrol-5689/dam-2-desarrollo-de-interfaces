@@ -1,19 +1,17 @@
 package com.primertrimestre.ui.controllers;
 
-import com.primertrimestre.ui.view.LoginWindow;
-
 public final class UiLauncher {
 
     private static final AppContext APP = AppContext.getInstance(); // singleton: se crea una única vez al cargar la clase
     
     public static void showLogin() {
-        LoginWindow view = new LoginWindow();
         new LoginController(
-                view,
                 APP.getStudentService(),
                 APP.getTeacherService(),
                 APP.getAdministratorService(),
                 APP.getSession(),
+
+                //=== LOGIN NAVIGATOR ANÓNIMO ============================
 
                 // Le pasamos una clase anónima que implementa los contratos de la interfaz que está dentro del controller
                 // implementación del callback de navegación
@@ -22,17 +20,16 @@ public final class UiLauncher {
                     public void onStudentLogin() {
                         UiLauncher.showStudent();
                     }
-
                     @Override
                     public void onTeacherLogin() {
                         UiLauncher.showTeacher();
                     }
-
                     @Override
                     public void onAdminLogin() {
                         UiLauncher.showAdmin();
                     }
                 }
+                //========================================================
         ).showLoginFrame(); 
     }
 

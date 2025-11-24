@@ -16,26 +16,40 @@ import com.primertrimestre.ui.view.LoginWindow;
 
 public final class LoginController implements ActionListener{
 	
-    private final LoginWindow view;
+    private LoginWindow view;
     private final SessionContext session;
     private final StudentService studentService;
     private final TeacherService teacherService;
     private final AdministratorService administratorService;
     private final LoginNavigator navigator;
 
-    public LoginController(LoginWindow view, StudentService studentService, 
-    					   TeacherService teacherService, AdministratorService administratorService,
-                           SessionContext session,
+    public LoginController(StudentService studentService, TeacherService teacherService, 
+                           AdministratorService administratorService, SessionContext session, 
                            LoginNavigator navigator) {
-        this.view = view;
         this.studentService = studentService;
         this.teacherService = teacherService;
         this.administratorService = administratorService;
         this.session = session;
         this.navigator = navigator;
     }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {	
+    	String command = e.getActionCommand(); // Objet obj = e.getSource(); me gusta menos. 
+    	switch (command) {
+	    	case LoginWindow.CMD_LOGIN  -> handleLogin();
+	        case LoginWindow.CMD_CLEAR  -> view.clearForm();
+	        case LoginWindow.CMD_SINGUP -> openRegistration();
+    	}
+    }
     
     public void showLoginFrame() {
+        view = new LoginWindow();
+        registerListeners();
+        view.setVisible(true);
+    }
+
+    private void registerListeners() {
         view.getBtnLogin().addActionListener(this);
         view.getBtnSingUp().addActionListener(this);
         view.getBtnClear().addActionListener(this);
@@ -48,16 +62,6 @@ public final class LoginController implements ActionListener{
 	            }
         	}
         );
-        view.setVisible(true);
-    }
-    @Override
-    public void actionPerformed(ActionEvent e) {	
-    	String command = e.getActionCommand(); // Objet obj = e.getSource(); me gusta menos. 
-    	switch (command) {
-	    	case LoginWindow.CMD_LOGIN  -> handleLogin();
-	        case LoginWindow.CMD_CLEAR  -> view.clearForm();
-	        case LoginWindow.CMD_SINGUP -> openRegistration();
-    	}
     }
     
     private void handleLogin() {    	
