@@ -39,10 +39,8 @@ public final class AppContext {
     private final StudentService studentService = new StudentService(studentDao);
     private final TeacherService teacherService = new TeacherService(teacherDao);
     private final ModuleService moduleService = new ModuleService(moduleDao, teacherDao);
-    private final EnrollmentService enrollmentService =
-            new EnrollmentService(enrollmentDao, studentDao, moduleDao);
-    private final AdministratorService administratorService =
-            new AdministratorService(administratorDao);
+    private final EnrollmentService enrollmentService = new EnrollmentService(enrollmentDao, studentDao, moduleDao);
+    private final AdministratorService administratorService = new AdministratorService(administratorDao);
 
     // Constructor privado: bloquea new AppContext() fuera de esta clase y garantiza un único punto de acceso.
     private AppContext() {
