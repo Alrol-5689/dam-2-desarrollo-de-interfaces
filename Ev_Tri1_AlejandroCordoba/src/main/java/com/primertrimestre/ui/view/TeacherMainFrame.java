@@ -57,11 +57,19 @@ public class TeacherMainFrame extends JFrame { // No implemento ActionListener p
     studentsDates: array de String que guarda los datos de una fila de la tabla
      */
 	private final DefaultTableModel studentTableModel = 
-        new DefaultTableModel(new Object[] {"ID", "Nick", "Nombre", "Nota"}, 0) { 
-            private static final long serialVersionUID = 1L;
-            @Override
-            public boolean isCellEditable(int row, int column) {return column == 3; }
-            // Sólo la columna de nota se puede editar
+        new DefaultTableModel(
+            /*
+            EN VEZ DE ESTO EN EL CONSTRUCTOR:
+            studentTableModel.addColumn("ID");
+            studentTableModel.addColumn("Nick");
+            studentTableModel.addColumn("Nombre");
+            studentTableModel.addColumn("Nota");
+            */
+            new Object[] /*columnas*/{"ID", "Nick", "Nombre", "Nota"},/*filas iniciales*/0) { 
+                private static final long serialVersionUID = 1L;
+                @Override
+                public boolean isCellEditable(int row, int column) {return column == 3; }
+                // Sólo la columna de nota se puede editar
 	    };
 
     private JTable studentsTable;
